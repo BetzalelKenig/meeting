@@ -151,7 +151,7 @@ export class WhiteboardComponent implements OnInit {
     if (!this.ctx) {
       return;
     }
-    console.log('draw on canvas func');
+    // console.log('draw on canvas func', color);
 
     this.ctx.beginPath();
 

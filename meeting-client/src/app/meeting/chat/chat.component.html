@@ -1,14 +1,74 @@
+<!-- join to room -->
 <div *ngIf="inRoom === ''">
-    <h1>Select Chat Room</h1>
-    <form (submit)="joinRoom()">
-        <div class="form-group">
-            <select class="form-control" onchange="this.nextElementSibling.value=this.value " placeholder="Add room ">
+  <h1>Select Chat Room</h1>
+  <form #roomForm="ngForm" (ngSubmit)="joinRoom(roomForm)">
+    <div class="form-group">
+      <select
+        ngModel
+        name="room"
+        class="form-control"
+        onchange="this.nextElementSibling.value=this.value "
+        placeholder="Add room "
+      >
         <option value="mainroom ">Main Room</option>
         <option value="room1 ">Room 1</option>
         <option value="room2 ">Room 2</option>
       </select>
-            <input class="form-control" type=" text " name="format " placeholder="Add room... " />
-            <button type="submit" class="btn btn-success">Join</button>
-        </div>
+      <input
+        class="form-control"
+        type=" text "
+        name="format "
+        placeholder="Add room... "
+      />
+      <button type="submit" class="btn btn-success">Join</button>
+    </div>
+  </form>
+</div>
+<!-- chat -->
+<div  *ngIf="inRoom !== ''">
+  <div class="btn-group pull-right">
+    <button
+      type="button"
+      class="btn btn-danger btn-xs"
+      (click)="leaveRoom()"
+      style="margin-top: 40px"
+    >
+      Logout
+    </button>
+  </div>
+  <!-- messages -->
+  <ul class="list-group">
+    <li
+      class="list-group-item list-group-item-success m-2"
+      *ngFor="let m of messages"
+    >
+      <span>{{ m.sender }}</span
+      ><span class="float-right">{{ m.date }}</span>
+      <p>{{ m.message }}</p>
+    </li>
+  </ul>
+  <!-- enter message and send -->
+  <div class="">
+    <form #messageForm="ngForm" (ngSubmit)="sendMessage(messageForm)">
+      <div class="input-group">
+        <input
+          autofocus
+          type="text"
+          name="message"
+          ngModel
+          class="form-control input-sm"
+          placeholder="Type your message here..."
+          required=""
+        />
+        <span class="input-group-btn">
+          <input
+            type="submit"
+            class="btn btn-warning btn-sm"
+            id="btn-chat"
+            value="Send"
+          />
+        </span>
+      </div>
     </form>
+  </div>
 </div>
