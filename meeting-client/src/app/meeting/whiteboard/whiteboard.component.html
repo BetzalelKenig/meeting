@@ -15,12 +15,12 @@
             <input
               class="form-control input-sm"
               #lineWidth
-              type="range"
-              value="3"
+              type="number"
+              
               id="vol"
               name="vol"
               min="0"
-              max="20"
+              max="30"
               [(ngModel)]="size"
             />
           </button>
@@ -42,7 +42,7 @@
             </div>
         </ul>
         <div class="btn-group btn-group-toggle selector med-2 sm-2" data-toggle="buttons">
-            <label class="btn btn-primary active" (click)="draw(markerColor)">
+            <label class="btn btn-primary active"  (click)="draw(markerColor) ">
         <input type="radio" name="options" autocomplete="off" checked />
         Draw
       </label>
