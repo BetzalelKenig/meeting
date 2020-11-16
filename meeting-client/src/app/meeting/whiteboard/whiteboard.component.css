@@ -2,4 +2,5 @@ canvas {
     border: 3px solid rgb(248, 30, 30) !important;
     overflow: scroll !important;
     scroll-behavior: auto;
+    border-radius: 20px;
 }
