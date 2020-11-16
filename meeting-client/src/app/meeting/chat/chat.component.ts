@@ -33,6 +33,8 @@ export class ChatComponent implements OnInit {
 
   leaveRoom() {
     this.inRoom = '';
+    this.messages = [];
+    this.participants = [];
   }
 
   sendMessage(messageForm: NgForm) {
