@@ -14,12 +14,21 @@ export class ChatComponent implements OnInit {
   participants = ['John', 'melculm'];
 
   constructor(private meetingService: MeetingService) {}
+  socket = this.meetingService.socket;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.socket.on('chatToClient', (messageData) => {
+      const { room, ...data } = messageData;
+      console.log(data);
+
+      this.rightMessage(data.date, data.sender, data.message);
+    });
+  }
 
   joinRoom(form: NgForm) {
     console.log('joinRoom', form.value.room);
     this.inRoom = form.value.room;
+    this.socket.emit('joinRoom', this.inRoom);
   }
 
   leaveRoom() {
@@ -27,11 +36,21 @@ export class ChatComponent implements OnInit {
   }
 
   sendMessage(messageForm: NgForm) {
-    this.messages.push({
+    let messageData = {
       date: new Date().toDateString(),
       sender: this.username,
       message: messageForm.value.message,
-    });
-    messageForm.reset();
+    };
+
+    this.socket.emit('sendMessage', { room: this.inRoom, ...messageData });
+  }
+
+  rightMessage(date, sender, message) {
+    let messageData = {
+      date: date,
+      sender: sender,
+      message: message,
+    };
+    this.messages.push(messageData);
   }
 }

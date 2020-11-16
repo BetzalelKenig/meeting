@@ -5,7 +5,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway(3001)
 export class MeetingGateway
@@ -22,7 +22,7 @@ export class MeetingGateway
   }
   // get the coordinates from client and emit them to the others
   @SubscribeMessage('draw-coordinates')
-  handleMessage(client: any, payload: any): any {
+  handleDraw(client: any, payload: any): any {
     
     // send to others
     this.wss.emit('draw-this', payload);
@@ -34,6 +34,26 @@ export class MeetingGateway
    
     // clear others
     this.wss.emit('clear-board');
+  }
+
+
+  @SubscribeMessage('sendMessage')
+  handleMessage(client: Socket, message: {room: string, date:string, sender: string, message: string }) {
+    console.log(message);
+    
+    this.wss.to(message.room).emit('chatToClient', message);
+  }
+
+  @SubscribeMessage('joinRoom')
+  handleRoomJoin(client: Socket, room: string ) {
+    client.join(room);
+    client.emit('joinedRoom', room);
+  }
+
+  @SubscribeMessage('leaveRoom')
+  handleRoomLeave(client: Socket, room: string ) {
+    client.leave(room);
+    client.emit('leftRoom', room);
   }
 }
 
