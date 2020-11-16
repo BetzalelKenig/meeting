@@ -28,13 +28,14 @@ export class ChatComponent implements OnInit {
   joinRoom(form: NgForm) {
     console.log('joinRoom', form.value.room);
     this.inRoom = form.value.room;
-    this.socket.emit('joinRoom', this.inRoom);
+    this.meetingService.joinRoom(this.inRoom);
   }
 
   leaveRoom() {
     this.inRoom = '';
     this.messages = [];
     this.participants = [];
+    this.meetingService.leaveRoom();
   }
 
   sendMessage(messageForm: NgForm) {

@@ -24,13 +24,13 @@ export class MeetingGateway
   @SubscribeMessage('draw-coordinates')
   handleDraw(client: any, payload: any): any {
     // send to others
-    this.wss.emit('draw-this', payload);
+    this.wss.to(payload.room).emit('draw-this', payload);
   }
 
   @SubscribeMessage('clear')
   handleClear(client: any, payload: any): any {
     // clear others
-    this.wss.emit('clear-board');
+    this.wss.to(payload.room).emit('clear-board');
   }
 
   @SubscribeMessage('sendMessage')

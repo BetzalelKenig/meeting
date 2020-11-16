@@ -92,6 +92,7 @@ export class WhiteboardComponent implements OnInit {
         // this method do the actual drawing
         this.drawOnCanvas(prevPos, currentPos, this.markerColor, this.size);
         this.socket.emit('draw-coordinates', {
+          room: this.meetingService.room,
           prevPos: prevPos,
           currentPos: currentPos,
           color: this.markerColor,
@@ -132,6 +133,7 @@ export class WhiteboardComponent implements OnInit {
         // this method do the actual drawing
         this.drawOnCanvas(prevPos, currentPos, this.markerColor, this.size);
         this.socket.emit('draw-coordinates', {
+          room: this.meetingService.room,
           prevPos: prevPos,
           currentPos: currentPos,
           color: this.markerColor,
@@ -178,7 +180,7 @@ export class WhiteboardComponent implements OnInit {
   clear() {
     this.ctx.clearRect(0, 0, this.width, this.height);
 
-    this.socket.emit('clear');
+    this.socket.emit( 'clear',this.meetingService.room);
   }
 
   
