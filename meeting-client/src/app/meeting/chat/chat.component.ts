@@ -44,7 +44,7 @@ export class ChatComponent implements OnInit {
       sender: this.username,
       message: messageForm.value.message,
     };
-
+messageForm.reset()
     this.socket.emit('sendMessage', { room: this.inRoom, ...messageData });
   }
 

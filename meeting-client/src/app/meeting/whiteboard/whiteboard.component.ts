@@ -11,9 +11,10 @@ import { MeetingService } from '../meeting.service';
 })
 export class WhiteboardComponent implements OnInit {
   @ViewChild('canvas', { static: true }) public canvas: ElementRef;
+  @ViewChild('bgColor', { static: true }) public bgColor: ElementRef;
 
-  public width = window.innerWidth * 0.71;
-  public height = window.innerHeight * 0.78;
+  public width = window.innerWidth * 0.67;
+  public height = window.innerHeight * 0.75;
 
   @Input() markerColor = '#ff0000';
   @Input() size = 3;
@@ -55,7 +56,7 @@ export class WhiteboardComponent implements OnInit {
     canvasEl.width = this.width;
     canvasEl.height = this.height;
     //canvasEl.style.margin = "10px";
-    canvasEl.style.background = '#00ffff';
+    canvasEl.style.background = this.bg//this.bgColor.nativeElement.value;
 
     this.ctx.lineWidth = this.size;
     this.ctx.lineCap = 'round';
