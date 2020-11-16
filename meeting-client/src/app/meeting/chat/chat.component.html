@@ -1,0 +1,14 @@
+<div *ngIf="inRoom === ''">
+    <h1>Select Chat Room</h1>
+    <form (submit)="joinRoom()">
+        <div class="form-group">
+            <select class="form-control" onchange="this.nextElementSibling.value=this.value " placeholder="Add room ">
+        <option value="mainroom ">Main Room</option>
+        <option value="room1 ">Room 1</option>
+        <option value="room2 ">Room 2</option>
+      </select>
+            <input class="form-control" type=" text " name="format " placeholder="Add room... " />
+            <button type="submit" class="btn btn-success">Join</button>
+        </div>
+    </form>
+</div>

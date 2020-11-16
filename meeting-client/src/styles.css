@@ -1,0 +1,10 @@
+body {
+    background: rgba(58, 163, 37, 0.81) !important;
+    background-color: rgba(0, 0, 0, 0.81) !important;
+    color: aqua !important;
+    /* overflow: hidden; */
+}
+
+button {
+    margin: 2px !important;
+}

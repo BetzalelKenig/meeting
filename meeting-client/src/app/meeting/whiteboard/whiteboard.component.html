@@ -1,0 +1,56 @@
+<nav class="navbar navbar-inverse" style="max-height: 100px;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <!-- <a class="navbar-brand" href="#">WebSiteName</a> -->
+        </div>
+        <ul class="nav navbar-nav">
+            <div class="row">
+                <div class="col-xs-2">
+                    <p class="form-control-static">Pick a color</p>
+                    <input class="form-control" type="color" [(ngModel)]="markerColor" value="#ff0000" />
+                </div>
+                <div class="col-xs-2">
+                    <button class="btn text-info">
+            <label for="vol">Line width</label><br />
+            <input
+              class="form-control input-sm"
+              #lineWidth
+              type="range"
+              value="3"
+              id="vol"
+              name="vol"
+              min="0"
+              max="20"
+              [(ngModel)]="size"
+            />
+          </button>
+                </div>
+                <div class="col-xs-2">
+                    <button class="btn text-info">
+            <p class="form-control-static">Background Color</p>
+            <input
+              class="form-control"
+              #bgColor
+              type="color"
+              value="#00ffff"
+              name=""
+              id="bgColor"
+              [(ngModel)]="bg"
+            />
+          </button>
+                </div>
+            </div>
+        </ul>
+        <div class="btn-group btn-group-toggle selector med-2 sm-2" data-toggle="buttons">
+            <label class="btn btn-primary active" (click)="draw(markerColor)">
+        <input type="radio" name="options" autocomplete="off" checked />
+        Draw
+      </label>
+            <label class="btn btn-primary" (click)="eraser()">
+        <input type="radio" name="options" autocomplete="off" /> Erase
+      </label>
+        </div>
+        <button (click)="clear()" class="btn btn-danger med-2 sm-2">Clear</button>
+    </div>
+</nav>
+<canvas #canvas></canvas>
