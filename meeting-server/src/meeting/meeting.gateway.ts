@@ -23,7 +23,7 @@ export class MeetingGateway
   // get the coordinates from client and emit them to the others
   @SubscribeMessage('draw-coordinates')
   handleDraw(client: any, payload: any): any {
-    // send to others
+    // send to others in the room 
     this.wss.to(payload.room).emit('draw-this', payload);
   }
 
