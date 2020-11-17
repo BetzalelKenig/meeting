@@ -46,7 +46,7 @@ export class WhiteboardComponent implements OnInit {
     this.socket.on(
       'clear-board',
       function () {
-        this.clear();
+        this.clearMe();
       }.bind(this)
     );
   }
@@ -187,8 +187,11 @@ export class WhiteboardComponent implements OnInit {
   }
 
   clear() {
-    this.ctx.clearRect(0, 0, this.width, this.height);
+    
 
     this.socket.emit('clear', this.meetingService.room);
+  }
+  clearMe(){
+    this.ctx.clearRect(0, 0, this.width, this.height);
   }
 }

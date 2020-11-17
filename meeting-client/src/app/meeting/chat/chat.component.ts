@@ -12,6 +12,7 @@ export class ChatComponent implements OnInit {
   @Input() inRoom = '';
   messages = [{ date: '34 sun', sender: 'John', message: 'test message' }];
   participants;
+  defaultRoom = 'Main Room'
 
   constructor(private meetingService: MeetingService) {}
   socket = this.meetingService.socket;

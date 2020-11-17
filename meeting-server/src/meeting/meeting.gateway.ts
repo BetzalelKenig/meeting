@@ -30,7 +30,7 @@ export class MeetingGateway
   @SubscribeMessage('clear')
   handleClear(client: any, payload: any): any {
     // clear others
-    this.wss.to(payload.room).emit('clear-board');
+    this.wss.to(payload).emit('clear-board');
   }
 
   @SubscribeMessage('sendMessage')

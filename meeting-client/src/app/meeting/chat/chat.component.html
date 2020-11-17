@@ -1,51 +1,69 @@
 <!-- join to room -->
 <div *ngIf="inRoom === ''">
-    <h3 class="text-success">Select Chat Room</h3>
-    <form #roomForm="ngForm" (ngSubmit)="joinRoom(roomForm)">
-        <div class="form-group">
-            <select value="Main Room" ngModel name="room" class="form-control">
-             <option value="Main Room">Main Room</option>
-             <option value="Room 1">Room 1</option>
-             <option value="Room 2">Room 2</option>
-             <option value="Room 3 ">Room 3</option>
-            </select>
+  <h3 class="text-success">Select Chat Room</h3>
+  <form #roomForm="ngForm" (ngSubmit)="joinRoom(roomForm)">
+    <div class="form-group">
+      <select value="Main Room" [(ngModel)]="defaultRoom" name="room" class="form-control">
+        <option value="Main Room">Main Room</option>
+        <option value="Room 1">Room 1</option>
+        <option value="Room 2">Room 2</option>
+        <option value="Room 3 ">Room 3</option>
+      </select>
 
-            <button type="submit" class="btn btn-success">Join</button>
-            <button type="button" class="btn btn-success">Add Room</button>
-        </div>
-    </form>
+      <button type="submit" class="btn btn-success">Join</button>
+      <button type="button" class="btn btn-success">Add Room</button>
+    </div>
+  </form>
 </div>
 <!-- chat -->
 <div *ngIf="inRoom !== ''">
-    <div class="btn-group pull-right">
-        <button type="button" class="btn btn-danger btn-xs" (click)="leaveRoom()" style="margin-top: 40px">
+  <div class="btn-group pull-right">
+    <button
+      type="button"
+      class="btn btn-danger btn-xs"
+      (click)="leaveRoom()"
+      style="margin-top: 40px"
+    >
       Logout
     </button>
-    </div>
-    <!-- messages -->
-    <ul class="list-group">
-        <li class="list-group-item list-group-item-success m-1 p-0" *ngFor="let m of messages">
-            <span>{{ m.sender }}</span
-      ><span class="float-right font-weight-lighter small"><small>{{ m.date }}</small></span>
-      <hr >
-            <p>{{ m.message }}</p>
-        </li>
-    </ul>
-    <!-- enter message and send -->
-    <div class="sendmsg">
-        <form #messageForm="ngForm" (ngSubmit)="sendMessage(messageForm)">
-            <div class="input-group">
-                <input autofocus type="text" name="message" ngModel class="form-control input-sm" placeholder="Type your message here..." required />
-                <span class="input-group-btn">
+  </div>
+  <!-- messages -->
+  <ul class="list-group">
+    <li
+      class="list-group-item list-group-item-success m-1 p-0"
+      *ngFor="let m of messages"
+    >
+      <span>{{ m.sender }}</span
+      ><span class="float-right font-weight-lighter small"
+        ><small>{{ m.date }}</small></span
+      >
+      <hr />
+      <p>{{ m.message }}</p>
+    </li>
+  </ul>
+  <!-- enter message and send -->
+  <div class="sendmsg">
+    <form #messageForm="ngForm" (ngSubmit)="sendMessage(messageForm)">
+      <div class="input-group">
+        <input
+          autofocus
+          type="text"
+          name="message"
+          ngModel
+          class="form-control input-sm"
+          placeholder="Type your message here..."
+          required
+        />
+        <span class="input-group-btn">
           <input
-          [disabled]="!messageForm.valid"
+            [disabled]="!messageForm.valid"
             type="submit"
             class="btn btn-warning btn-sm"
             id="btn-chat"
             value="Send"
           />
         </span>
-            </div>
-        </form>
-    </div>
+      </div>
+    </form>
+  </div>
 </div>
