@@ -1,8 +1,12 @@
 <div class="row">
+    <div class="col-md-2">
+        <h3>Participants</h3>
+        <p *ngFor=" let p of participants">{{p}}</p>
+    </div>
     <div class="col-md-3 chat">
         <app-chat></app-chat>
     </div>
-    <div class="col-md-9 whiteboard">
+    <div class="col-md-7 whiteboard">
         <app-whiteboard> </app-whiteboard>
     </div>
 </div>

@@ -1,8 +1,10 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { pairwise, switchMap, takeUntil } from 'rxjs/operators';
 
 import { MeetingService } from '../meeting.service';
+
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-whiteboard',
@@ -42,7 +44,7 @@ export class WhiteboardComponent implements OnInit {
       }.bind(this)
     );
     this.socket.on(
-      "clear-board",
+      'clear-board',
       function () {
         this.clear();
       }.bind(this)
@@ -56,12 +58,12 @@ export class WhiteboardComponent implements OnInit {
     canvasEl.width = this.width;
     canvasEl.height = this.height;
     //canvasEl.style.margin = "10px";
-    canvasEl.style.background = this.bg//this.bgColor.nativeElement.value;
+    canvasEl.style.background = this.bg; //this.bgColor.nativeElement.value;
 
     this.ctx.lineWidth = this.size;
     this.ctx.lineCap = 'round';
     this.ctx.strokeStyle = '#000000';
-
+    //this.image = this.canvas.nativeElement.toDataURL('image/png');
     this.captureEvents(canvasEl);
   }
 
@@ -178,11 +180,15 @@ export class WhiteboardComponent implements OnInit {
     }
   }
 
+  saveImage() {
+    this.canvas.nativeElement.toBlob((blob) =>
+      FileSaver.saveAs(blob, 'image.png')
+    );
+  }
+
   clear() {
     this.ctx.clearRect(0, 0, this.width, this.height);
 
-    this.socket.emit( 'clear',this.meetingService.room);
+    this.socket.emit('clear', this.meetingService.room);
   }
-
-  
 }

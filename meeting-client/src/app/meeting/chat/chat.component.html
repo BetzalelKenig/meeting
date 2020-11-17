@@ -24,9 +24,10 @@
     </div>
     <!-- messages -->
     <ul class="list-group">
-        <li class="list-group-item list-group-item-success m-2" *ngFor="let m of messages">
+        <li class="list-group-item list-group-item-success m-1 p-0" *ngFor="let m of messages">
             <span>{{ m.sender }}</span
-      ><span class="float-right">{{ m.date }}</span>
+      ><span class="float-right font-weight-lighter small"><small>{{ m.date }}</small></span>
+      <hr >
             <p>{{ m.message }}</p>
         </li>
     </ul>
@@ -34,9 +35,10 @@
     <div class="sendmsg">
         <form #messageForm="ngForm" (ngSubmit)="sendMessage(messageForm)">
             <div class="input-group">
-                <input autofocus type="text" name="message" ngModel class="form-control input-sm" placeholder="Type your message here..." required="" />
+                <input autofocus type="text" name="message" ngModel class="form-control input-sm" placeholder="Type your message here..." required />
                 <span class="input-group-btn">
           <input
+          [disabled]="!messageForm.valid"
             type="submit"
             class="btn btn-warning btn-sm"
             id="btn-chat"

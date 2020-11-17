@@ -11,12 +11,13 @@ export class ChatComponent implements OnInit {
   username = 'John';
   @Input() inRoom = '';
   messages = [{ date: '34 sun', sender: 'John', message: 'test message' }];
-  participants = ['John', 'melculm'];
+  participants;
 
   constructor(private meetingService: MeetingService) {}
   socket = this.meetingService.socket;
 
   ngOnInit(): void {
+    this.participants = this.meetingService.participants;
     this.socket.on('chatToClient', (messageData) => {
       const { room, ...data } = messageData;
       console.log(data);
@@ -34,8 +35,8 @@ export class ChatComponent implements OnInit {
   leaveRoom() {
     this.inRoom = '';
     this.messages = [];
-    this.participants = [];
-    this.meetingService.leaveRoom();
+    
+    this.meetingService.leaveRoom(this.inRoom);
   }
 
   sendMessage(messageForm: NgForm) {
@@ -56,4 +57,11 @@ messageForm.reset()
     };
     this.messages.push(messageData);
   }
+
+    // Todo allow user to enter in new line
+   handleEnter(evt) {
+    if (evt.keyCode == 13 && evt.shiftKey) {
+      if (evt.type == "keypress") {
+        //pasteIntoInput(this, "\n");
+      }}}
 }

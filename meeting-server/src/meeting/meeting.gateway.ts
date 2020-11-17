@@ -44,14 +44,14 @@ export class MeetingGateway
   }
 
   @SubscribeMessage('joinRoom')
-  handleRoomJoin(client: Socket, room: string) {
-    client.join(room);
-    this.wss.to(room).emit('joinedRoom', room);
+  handleRoomJoin(client: Socket, payload) {
+    client.join(payload.room);
+    this.wss.to(payload.room).emit('joinedRoom', payload.username);
   }
 
   @SubscribeMessage('leaveRoom')
-  handleRoomLeave(client: Socket, room: string) {
-    client.leave(room);
-    this.wss.to(room).emit('leftRoom', room);
+  handleRoomLeave(client: Socket, payload) {
+    client.leave(payload.room);
+    this.wss.to(payload.room).emit('leftRoom', payload.username);
   }
 }
