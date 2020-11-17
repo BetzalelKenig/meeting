@@ -8,17 +8,20 @@ import { MeetingService } from '../meeting.service';
   styleUrls: ['./chat.component.css'],
 })
 export class ChatComponent implements OnInit {
-  username = 'John';
+  //username = JSON.parse(localStorage.getItem('userData'));
   @Input() inRoom = '';
-  messages = [{ date: '34 sun', sender: 'John', message: 'test message' }];
-  participants;
+  messages = [];
+  participants=[];
   defaultRoom = 'Main Room'
 
   constructor(private meetingService: MeetingService) {}
   socket = this.meetingService.socket;
 
   ngOnInit(): void {
-    this.participants = this.meetingService.participants;
+     this.meetingService.participantsChanged.subscribe(names=>{
+     
+       
+      this.participants=names});
     this.socket.on('chatToClient', (messageData) => {
       const { room, ...data } = messageData;
       
@@ -40,10 +43,12 @@ export class ChatComponent implements OnInit {
     this.meetingService.leaveRoom(this.inRoom);
   }
 
+
   sendMessage(messageForm: NgForm) {
+    let { name } = JSON.parse(localStorage.getItem('userData'));
     let messageData = {
       date: new Date().toDateString(),
-      sender: this.username,
+      sender: name,
       message: messageForm.value.message,
     };
 messageForm.reset()
