@@ -21,7 +21,7 @@ export class ChatComponent implements OnInit {
     this.participants = this.meetingService.participants;
     this.socket.on('chatToClient', (messageData) => {
       const { room, ...data } = messageData;
-      console.log(data);
+      
 
       this.rightMessage(data.date, data.sender, data.message);
     });
