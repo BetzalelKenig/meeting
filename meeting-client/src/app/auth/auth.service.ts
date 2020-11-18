@@ -26,7 +26,16 @@ export class AuthService {
         username,
         password,
       })
-      .pipe(catchError(this.handleError));
+      .pipe(
+        catchError(this.handleError),
+      tap((resData) => {
+        this.handleAuthentication(
+          resData.name,
+          resData.token,
+          +resData.expiresIn
+        );
+      })
+    );
   }
 
   login(username: string, password: string) {

@@ -20,7 +20,10 @@ export class ChatComponent implements OnInit {
   socket = this.meetingService.socket;
 
   ngOnInit(): void {
-    this.participants = this.meetingService.participants;
+     this.meetingService.participantsChanged.subscribe(names=>{
+     
+       
+      this.participants=names});
     this.socket.on('chatToClient', (messageData) => {
       const { room, ...data } = messageData;
 
@@ -40,6 +43,7 @@ export class ChatComponent implements OnInit {
 
     this.meetingService.leaveRoom(this.inRoom);
   }
+
 
   sendMessage(messageForm: NgForm) {
     const { name } = JSON.parse(localStorage.getItem('userData'));

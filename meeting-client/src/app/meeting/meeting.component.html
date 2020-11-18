@@ -2,6 +2,7 @@
     <div class="col-md-2" *ngIf="inRoom !== ''">
         <h3>Participants</h3>
         <p *ngFor=" let p of participants">{{p}}</p>
+
     </div>
     <div class="col-md-3 chat" >
         <app-chat (room)="toggle($event)"></app-chat>

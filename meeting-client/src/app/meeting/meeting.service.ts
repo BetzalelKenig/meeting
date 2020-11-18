@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 import * as io from 'socket.io-client';
 import { AuthService } from '../auth/auth.service';
@@ -8,13 +9,14 @@ import { AuthService } from '../auth/auth.service';
 })
 export class MeetingService {
   socket = io('http://localhost:3001');
-  userName: string;
+  username: string;
   room = '';
   participants = [];
+  participantsChanged = new BehaviorSubject<any>(this.username);
   constructor(private authService: AuthService) {
     this.authService.user.subscribe((u) => {
-      this.userName = u.name;
-      this.participants.push(this.userName);
+      this.username = u.name;
+      this.participants.push(this.username);
     });
     this.socket.on('joinedRoom', (name: string) =>
       this.participants.push(name)
@@ -24,11 +26,11 @@ export class MeetingService {
   joinRoom(room: string) {
     this.room = room;
 
-    this.socket.emit('joinRoom', { room: room, username: this.userName });
+    this.socket.emit('joinRoom', { room: room, username: this.username });
   }
 
   leaveRoom(room: string) {
-    this.socket.emit('joinRoom', { room: room, username: this.userName });
+    this.socket.emit('leaveRoom', { room: room, username: this.username });
     this.room = '';
   }
 }
