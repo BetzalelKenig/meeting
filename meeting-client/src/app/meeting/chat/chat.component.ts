@@ -8,7 +8,9 @@ import { MeetingService } from '../meeting.service';
   styleUrls: ['./chat.component.css'],
 })
 export class ChatComponent implements OnInit {
-  username = 'John';
+
+ 
+  username;// = JSON.parse(localStorage.getItem('userData')).username;
   @Input() inRoom = '';
   messages = [{ date: '34 sun', sender: 'John', message: 'test message' }];
   participants;
@@ -18,6 +20,9 @@ export class ChatComponent implements OnInit {
   socket = this.meetingService.socket;
 
   ngOnInit(): void {
+    this.username = JSON.parse(localStorage.getItem('userData')).username;
+    console.log(JSON.parse(localStorage.getItem('userData')), 'username in oninit');
+    
     this.participants = this.meetingService.participants;
     this.socket.on('chatToClient', (messageData) => {
       const { room, ...data } = messageData;
@@ -43,7 +48,7 @@ export class ChatComponent implements OnInit {
   sendMessage(messageForm: NgForm) {
     let messageData = {
       date: new Date().toDateString(),
-      sender: this.username,
+      sender: JSON.parse(localStorage.getItem('userData')).username,
       message: messageForm.value.message,
     };
 messageForm.reset()
