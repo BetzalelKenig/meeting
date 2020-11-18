@@ -9,9 +9,14 @@ import { MeetingService } from './meeting.service';
 export class MeetingComponent implements OnInit {
   participants;
   constructor(private meetingService: MeetingService) { }
-
+inRoom = '';
   ngOnInit(): void {
     this.participants = this.meetingService.participants;
   }
+
+toggle(e){
+  this.inRoom = e;
+}
+
 
 }

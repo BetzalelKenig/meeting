@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, HostListener } from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { pairwise, switchMap, takeUntil } from 'rxjs/operators';
 
@@ -23,11 +23,16 @@ export class WhiteboardComponent implements OnInit {
   @Input() bg = '#00ffff';
 
   public ctx: CanvasRenderingContext2D;
+  canvasEl: HTMLCanvasElement;
 
   constructor(private meetingService: MeetingService) {}
   socket = this.meetingService.socket;
 
-  // reset the canvas when resize
+
+  resizeForChat(w){
+    this.canvasEl.width = w;
+  }
+  // //reset the canvas when resize
   // @HostListener('window:resize')onResize(){
   //     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
   //     this.ctx = canvasEl.getContext('2d');
@@ -50,21 +55,21 @@ export class WhiteboardComponent implements OnInit {
       }.bind(this)
     );
   }
-
+  
   public ngAfterViewInit() {
-    const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
-    this.ctx = canvasEl.getContext('2d');
+    this.canvasEl = this.canvas.nativeElement;
+    this.ctx = this.canvasEl.getContext('2d');
 
-    canvasEl.width = this.width;
-    canvasEl.height = this.height;
+    this.canvasEl.width = this.width;
+    this.canvasEl.height = this.height;
     //canvasEl.style.margin = "10px";
-    canvasEl.style.background = this.bg; //this.bgColor.nativeElement.value;
+    this.canvasEl.style.background = this.bg; //this.bgColor.nativeElement.value;
 
     this.ctx.lineWidth = this.size;
     this.ctx.lineCap = 'round';
     this.ctx.strokeStyle = '#000000';
     //this.image = this.canvas.nativeElement.toDataURL('image/png');
-    this.captureEvents(canvasEl);
+    this.captureEvents(this.canvasEl);
   }
 
   private captureEvents(canvasEl: HTMLCanvasElement) {
@@ -156,7 +161,7 @@ export class WhiteboardComponent implements OnInit {
     if (!this.ctx) {
       return;
     }
-    // console.log('draw on canvas func', color);
+    
 
     this.ctx.beginPath();
 

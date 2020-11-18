@@ -50,25 +50,27 @@ export class AuthService {
   autoLogin() {
     const userData: {
       name: string;
-      _token: string;
+      access_token: string;
       _tokenExpirationDate: string;
     } = JSON.parse(localStorage.getItem('userData'));
+
     if (!userData) {
       return;
     }
 
     const loadedUser = new User(
       userData.name,
-      userData._token,
+      userData.access_token,
       new Date(userData._tokenExpirationDate)
     );
 
     if (loadedUser.token) {
       this.user.next(loadedUser);
+
       const expirationDuration =
         new Date(userData._tokenExpirationDate).getTime() -
         new Date().getTime();
-      //this.autoLogout(expirationDuration);
+      this.autoLogout(expirationDuration);
     }
   }
 
@@ -82,12 +84,12 @@ export class AuthService {
     this.tokenExpirationTimer = null;
   }
 
-  // autoLogout(expirationDuration: number) {
-  //   console.log("Expiration Duration: ", expirationDuration);
-  //   this.tokenExpirationTimer = setTimeout(() => {
-  //     this.logout();
-  //   }, expirationDuration);
-  // }
+  autoLogout(expirationDuration: number) {
+    console.log("Expiration Duration: ", expirationDuration);
+    this.tokenExpirationTimer = setTimeout(() => {
+      this.logout();
+    }, expirationDuration);
+  }
 
   private handleAuthentication(name: string, token: string, expiresIn: number) {
     const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);

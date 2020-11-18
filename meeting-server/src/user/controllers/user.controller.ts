@@ -26,14 +26,19 @@ export class UserController {
 
   @Post('login')
   login(@Body()user: User): Observable<Object>{
+      let exp = new Date();
+      exp.setHours(exp.getHours() + 1);
+      console.log(exp);
+      
     return this.userService.login(user).pipe(
         map((jwt: string)=> {
-            return {name: user.username, token: jwt, expiresIn: 'asdf'}
+            return {name: user.username, token: jwt, expiresIn: 3600}
         })
     )
     
     
   }
+
 
   @Get(':id')
   findOne(@Param() params): Observable<User> {
