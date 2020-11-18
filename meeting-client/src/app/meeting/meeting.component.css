@@ -1,20 +1,9 @@
-.chat {
-   
-  
-
-}
-
 * {
     padding: 0;
     margin: 0;
 }
 
-.line{
+.line {
     border-right: 1px dashed rgb(14, 75, 38);
     padding: 1px;
-}
-
-
-.whiteboard {
-   
 }

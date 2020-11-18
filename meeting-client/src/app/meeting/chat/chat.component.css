@@ -1,7 +1,6 @@
 .sendmsg {
-    position: absolute !important;
-    bottom: 0 !important;
-    
+    /* position: absolute !important;
+    bottom: 0 !important; */
 }
 
 .chat {
@@ -9,15 +8,25 @@
     border-radius: 20px;
 }
 
-hr{
+hr {
     padding: 0px;
     margin: 0px;
-  }
+}
 
-  .messages{
+.messages {
     background: beige;
-   overflow: auto;
+    overflow: auto;
     border-radius: 20px;
     border: 3px solid green;
     height: 75vh;
-  }
+}
+
+.zoom {
+    transition: transform .2s;
+    /* Animation */
+}
+
+.zoom:hover {
+    transform: scale(1.5);
+    /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}

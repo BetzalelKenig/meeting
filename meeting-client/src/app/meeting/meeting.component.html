@@ -1,13 +1,13 @@
 <div class="row">
-  <div class="col-md-2">
-    <h3>Participants</h3>
-    <p *ngFor="let p of participants">{{ p }}</p>
-  </div>
-  <div class="col-md-3 chat" style="margin-left: 0px">
-    <app-chat (room)="toggle($event)"></app-chat>
-  </div>
-  <div class="col-md-0.1 line"></div>
-  <div class="col-md-6.9 whiteboard">
-    <app-whiteboard> </app-whiteboard>
-  </div>
+    <div class="col-md-2 text-center">
+        <h3>Participants</h3>
+        <p *ngFor="let p of participants">{{ p }}</p>
+    </div>
+    <div class="col-md-3 " style="margin-top: 18px;">
+        <app-chat (room)="toggle($event)"></app-chat>
+    </div>
+    <div class="col-md-0.1 line"></div>
+    <div class="col-md-6.9 ">
+        <app-whiteboard> </app-whiteboard>
+    </div>
 </div>

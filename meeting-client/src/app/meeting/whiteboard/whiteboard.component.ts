@@ -19,7 +19,7 @@ export class WhiteboardComponent implements OnInit {
   public height = window.innerHeight * 0.75;
 
   @Input() markerColor = '#ff0000';
-  @Input() size = 3;
+  @Input() size = 5;
   @Input() bg = '#00ffff';
 
   public ctx: CanvasRenderingContext2D;
