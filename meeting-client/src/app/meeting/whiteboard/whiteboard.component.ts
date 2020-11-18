@@ -15,7 +15,7 @@ export class WhiteboardComponent implements OnInit {
   @ViewChild('canvas', { static: true }) public canvas: ElementRef;
   @ViewChild('bgColor', { static: true }) public bgColor: ElementRef;
 
-  public width = window.innerWidth * 0.67;
+  public width = window.innerWidth * 0.55;
   public height = window.innerHeight * 0.75;
 
   @Input() markerColor = '#ff0000';
@@ -51,6 +51,8 @@ export class WhiteboardComponent implements OnInit {
     this.socket.on(
       'clear-board',
       function () {
+        
+        
         this.clearMe();
       }.bind(this)
     );
@@ -63,11 +65,13 @@ export class WhiteboardComponent implements OnInit {
     this.canvasEl.width = this.width;
     this.canvasEl.height = this.height;
     //canvasEl.style.margin = "10px";
-    this.canvasEl.style.background = this.bg; //this.bgColor.nativeElement.value;
+    //this.canvasEl.style.background = this.bg; //this.bgColor.nativeElement.value;
 
     this.ctx.lineWidth = this.size;
     this.ctx.lineCap = 'round';
-    this.ctx.strokeStyle = '#000000';
+    this.ctx.strokeStyle = '#00ffff';
+    this.ctx.fillStyle = "#00ffff";
+    this.ctx.fillRect(0, 0, this.width, this.height);
     //this.image = this.canvas.nativeElement.toDataURL('image/png');
     this.captureEvents(this.canvasEl);
   }
@@ -193,10 +197,15 @@ export class WhiteboardComponent implements OnInit {
 
   clear() {
     
+    this.clearMe()
 
     this.socket.emit('clear', this.meetingService.room);
   }
   clearMe(){
-    this.ctx.clearRect(0, 0, this.width, this.height);
+    
+    
+    this.ctx.fillStyle = "#00ffff";
+    this.ctx.fillRect(0, 0, this.width, this.height);
+    //this.ctx.clearRect(0, 0, this.width, this.height);
   }
 }

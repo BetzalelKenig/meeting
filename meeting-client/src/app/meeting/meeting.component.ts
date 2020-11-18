@@ -11,7 +11,9 @@ export class MeetingComponent implements OnInit {
   constructor(private meetingService: MeetingService) { }
 inRoom = '';
   ngOnInit(): void {
-    this.participants = this.meetingService.participants;
+    this.meetingService.participantsChanged.subscribe(p => {
+      this.participants = p;
+    });
   }
 
 toggle(e){

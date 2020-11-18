@@ -17,28 +17,25 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
-  create(@Body() user: User): Observable<User| Object> {
+  create(@Body() user: User): Observable<User | Object> {
     return this.userService.create(user).pipe(
-        map((user: User)=>user),
-        catchError(err => of({error: err.message}))
+      map((user: User) => user),
+      catchError(err => of({ error: err.message })),
     );
   }
 
   @Post('login')
-  login(@Body()user: User): Observable<Object>{
-      let exp = new Date();
-      exp.setHours(exp.getHours() + 1);
-      console.log(exp);
-      
-    return this.userService.login(user).pipe(
-        map((jwt: string)=> {
-            return {name: user.username, token: jwt, expiresIn: 3600}
-        })
-    )
-    
-    
-  }
+  login(@Body() user: User): Observable<Object> {
+    let exp = new Date();
+    exp.setHours(exp.getHours() + 1);
+    console.log(exp);
 
+    return this.userService.login(user).pipe(
+      map((jwt: string) => {
+        return { name: user.username, token: jwt, expiresIn: 3600 };
+      }),
+    );
+  }
 
   @Get(':id')
   findOne(@Param() params): Observable<User> {

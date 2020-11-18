@@ -6,10 +6,13 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { MessageService } from './services/message.service';
 
 @WebSocketGateway(3001)
 export class MeetingGateway
   implements OnGatewayConnection, OnGatewayDisconnect {
+  constructor(private messageService: MessageService) {}
+
   // server for send the massage to averyone
   @WebSocketServer() wss: Server;
 
@@ -23,14 +26,15 @@ export class MeetingGateway
   // get the coordinates from client and emit them to the others
   @SubscribeMessage('draw-coordinates')
   handleDraw(client: any, payload: any): any {
-    // send to others in the room 
+    // send to others in the room
     this.wss.to(payload.room).emit('draw-this', payload);
   }
 
   @SubscribeMessage('clear')
   handleClear(client: any, payload: any): any {
     // clear others
-    this.wss.to(payload).emit('clear-board');
+    client.broadcast.to(payload).emit('clear-board');
+    
   }
 
   @SubscribeMessage('sendMessage')
@@ -46,12 +50,23 @@ export class MeetingGateway
   @SubscribeMessage('joinRoom')
   handleRoomJoin(client: Socket, payload) {
     client.join(payload.room);
-    this.wss.to(payload.room).emit('joinedRoom', payload.username);
+    if (this.messageService.rooms[payload.room]) {
+      this.messageService.rooms[payload.room].push(payload.username);
+    } else {
+      this.messageService.rooms[payload.room] = [payload.username];
+    }
+    
+    
+    this.wss.to(payload.room).emit('joinedRoom', payload.username,this.messageService.rooms[payload.room]);
   }
 
   @SubscribeMessage('leaveRoom')
   handleRoomLeave(client: Socket, payload) {
     client.leave(payload.room);
-    this.wss.to(payload.room).emit('leftRoom', payload.username);
+    
+    this.messageService.rooms[payload.room] = this.messageService.rooms[payload.room].filter(name => name !== payload.username)
+   
+    
+    this.wss.to(payload.room).emit('leftRoom', payload.username,this.messageService.rooms[payload.room]);
   }
 }

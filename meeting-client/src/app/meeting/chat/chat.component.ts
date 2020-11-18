@@ -13,17 +13,14 @@ export class ChatComponent implements OnInit {
   @Output() room = new EventEmitter<string>();
 
   messages = [];
-  participants;
+
   defaultRoom = 'Main Room';
 
   constructor(private meetingService: MeetingService) {}
   socket = this.meetingService.socket;
 
   ngOnInit(): void {
-     this.meetingService.participantsChanged.subscribe(names=>{
-     
-       
-      this.participants=names});
+   
     this.socket.on('chatToClient', (messageData) => {
       const { room, ...data } = messageData;
 
@@ -38,12 +35,13 @@ export class ChatComponent implements OnInit {
   }
 
   leaveRoom() {
+    
+    
+    this.meetingService.leaveRoom(this.inRoom);
     this.inRoom = '';
     this.messages = [];
 
-    this.meetingService.leaveRoom(this.inRoom);
   }
-
 
   sendMessage(messageForm: NgForm) {
     const { name } = JSON.parse(localStorage.getItem('userData'));
