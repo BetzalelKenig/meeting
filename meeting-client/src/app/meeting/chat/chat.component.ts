@@ -20,6 +20,12 @@ export class ChatComponent implements OnInit {
   socket = this.meetingService.socket;
 
   ngOnInit(): void {
+
+    this.meetingService.messages.subscribe((m:[]) => {
+      this.messages.push(...m);
+      console.log(this.messages);
+      
+    })
    
     this.socket.on('chatToClient', (messageData) => {
       const { room, ...data } = messageData;

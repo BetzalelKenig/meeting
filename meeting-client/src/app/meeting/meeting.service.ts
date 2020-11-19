@@ -11,6 +11,7 @@ export class MeetingService {
   socket = io('http://localhost:3001');
   userName: string;
   room = '';
+  messages = new Subject();
   //participants;
   participantsChanged = new Subject();
   constructor(private authService: AuthService) {
@@ -31,6 +32,12 @@ export class MeetingService {
         this.participantsChanged.next(participants);
       }
     );
+
+    this.socket.on('roomMessages',messages =>{
+      this.messages.next(messages);
+      
+      
+    })
   }
 
   joinRoom(room: string) {

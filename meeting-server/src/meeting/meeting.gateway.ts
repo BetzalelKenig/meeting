@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { MessageService } from './services/message.service';
+import { MessageEntity } from './models/message.entity';
 
 @WebSocketGateway(3001)
 export class MeetingGateway
@@ -40,9 +41,9 @@ export class MeetingGateway
   @SubscribeMessage('sendMessage')
   handleMessage(
     client: Socket,
-    message: { room: string; date: string; sender: string; message: string },
+    message: MessageEntity,
   ) {
-    console.log(message);
+    this.messageService.create(message)
 
     this.wss.to(message.room).emit('chatToClient', message);
   }
@@ -60,6 +61,14 @@ export class MeetingGateway
     } else {
       this.messageService.rooms[payload.room] = [payload.username];
     }
+
+    this.messageService.getRoomMessages(payload.room).then(m=>{
+      client.emit('roomMessages',m)
+      
+    });
+    
+    
+   
     
     
     this.wss.to(payload.room).emit('joinedRoom', payload.username,this.messageService.rooms[payload.room]);

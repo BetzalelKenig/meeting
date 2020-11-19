@@ -9,11 +9,13 @@ export class MessageEntity {
   date: Date;
 
   @Column()
+  room: string;
+
+  @Column()
   sender: string;
 
   @Column()
   message: string;
 
-  @Column()
-  room: string;
+  
 }
