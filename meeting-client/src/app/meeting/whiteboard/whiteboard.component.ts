@@ -18,7 +18,7 @@ export class WhiteboardComponent implements OnInit {
   public width = window.innerWidth * 0.55;
   public height = window.innerHeight * 0.75;
 
-  @Input() markerColor = '#ff0000';
+  @Input() markerColor = '#0000ff';
   @Input() size = 5;
   @Input() bg = '#00ffff';
 
@@ -183,7 +183,7 @@ export class WhiteboardComponent implements OnInit {
   }
 
   draw(jscolor) {
-    this.markerColor = jscolor;
+    this.markerColor = '#0000ff';
     if (this.markerColor == undefined) {
       this.markerColor = '#000000';
     }

@@ -54,13 +54,14 @@ if(this.chat != undefined)
     this.chat.nativeElement.scrollTop = this.chat.nativeElement.scrollHeight;
   }
   ngAfterViewChecked() {
-    
+    this.scrollToBottom();
   }
 
   joinRoom(form: NgForm) {
     this.inRoom = form.value.room;
     this.room.emit(this.inRoom);
     this.meetingService.joinRoom(this.inRoom);
+    
   }
 
   leaveRoom() {
