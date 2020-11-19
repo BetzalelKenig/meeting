@@ -38,21 +38,14 @@ export class ChatComponent implements OnInit {
     private meetingService: MeetingService,
     private authService: AuthService
   ) {}
-  socket = this.meetingService.socket;
+  socket;
 
   ngOnInit(): void {
     this.meetingService.messages.subscribe((m: []) => {
       this.messages.push(...m);
-      console.log(this.messages);
     });
     this.authService.user.subscribe((user) => {
       this.username = user.name;
-    });
-
-    this.socket.on('chatToClient', (messageData) => {
-      const { room, ...data } = messageData;
-
-      this.rightMessage(data.date, data.sender, data.message);
     });
   }
 
@@ -65,9 +58,16 @@ export class ChatComponent implements OnInit {
   }
 
   joinRoom(form: NgForm) {
+    this.socket = this.meetingService.socket;
     this.inRoom = form.value.room;
     this.room.emit(this.inRoom);
     this.meetingService.joinRoom(this.inRoom);
+
+    this.socket.on('chatToClient', (messageData) => {
+      const { room, ...data } = messageData;
+
+      this.rightMessage(data.date, data.sender, data.message);
+    });
   }
 
   leaveRoom() {
@@ -107,5 +107,5 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  addRoom(roomForm){}
+  addRoom(roomForm) {}
 }

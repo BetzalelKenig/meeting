@@ -8,11 +8,11 @@ import { Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class MeetingService {
-  socket = io('http://localhost:3001');
+ 
   userName: string;
   room = '';
   messages = new Subject();
-  
+  socket = io('http://localhost:3001');
   participantsChanged = new Subject();
   constructor(private authService: AuthService) {
     this.authService.user.subscribe((u) => {
@@ -20,6 +20,16 @@ export class MeetingService {
         this.userName = u.name;
       }
     });
+
+  
+  }
+
+  joinRoom(room: string) {
+    this.room = room;
+
+
+    
+
 
     this.socket.on('joinedRoom', (name, participants) => {
       // this.participants = paticipants;
@@ -38,10 +48,6 @@ export class MeetingService {
       
       
     })
-  }
-
-  joinRoom(room: string) {
-    this.room = room;
 
     this.socket.emit('joinRoom', { room: room, username: this.userName });
   }

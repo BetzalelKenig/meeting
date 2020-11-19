@@ -23,12 +23,15 @@ export class MeetingGateway
   // server for send the massage to averyone
   @WebSocketServer() wss: Server;
 
+  
+
   handleConnection(client: any, ...args: any[]) {
     console.log('connection');
+    
   }
 
   handleDisconnect(client: any) {
-    console.log('disconnected');
+    console.log('disconnected',client);
   }
   // get the coordinates from client and emit them to the others
   @SubscribeMessage('draw-coordinates')
@@ -49,7 +52,7 @@ export class MeetingGateway
     client: Socket,
     message: MessageEntity,
   ) {
-    this.messageService.create(message)
+    this.messageService.createMessage(message)
 
     this.wss.to(message.room).emit('chatToClient', message);
   }
@@ -57,8 +60,6 @@ export class MeetingGateway
   @SubscribeMessage('joinRoom')
   handleRoomJoin(client: Socket, payload) {
     client.join(payload.room);
-    
-    
     if (this.messageService.rooms[payload.room]) {
       // for case of join whitout leave
       if(!this.messageService.rooms[payload.room].includes(payload.username)){
@@ -68,23 +69,20 @@ export class MeetingGateway
     } else {
       this.messageService.rooms[payload.room] = [payload.username];
     }
-
     this.messageService.getRoomMessages(payload.room).then(m=>{
       client.emit('roomMessages',m)
-      
     });
-    
-    
-   
-    
-    
     this.wss.to(payload.room).emit('joinedRoom', payload.username,this.messageService.rooms[payload.room]);
+    // let clients = this.wss.sockets.adapter.rooms['Room Name'].sockets;
+    // console.log(clients);
+    
   }
 
   @SubscribeMessage('leaveRoom')
   handleRoomLeave(client: Socket, payload) {
     client.leave(payload.room);
     
+    if(this.messageService.rooms[payload.room])
     this.messageService.rooms[payload.room] = this.messageService.rooms[payload.room].filter(name => name !== payload.username)
    
     
