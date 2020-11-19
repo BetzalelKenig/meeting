@@ -1,107 +1,115 @@
 <!-- join to room -->
 <div *ngIf="inRoom === ''">
-  <h3 class="text-success">Select Chat Room</h3>
-  <form #roomForm="ngForm" (ngSubmit)="joinRoom(roomForm)">
-    <div class="form-group">
-      <select
-        value="Main Room"
-        [(ngModel)]="defaultRoom"
-        name="room"
-        class="form-control"
-      >
+    <h3 class="text-success">Select Chat Room</h3>
+    <form #roomForm="ngForm" (ngSubmit)="joinRoom(roomForm)">
+        <div class="form-group">
+            <select value="Main Room" [(ngModel)]="defaultRoom" name="room" class="form-control">
         <option value="Main Room">Main Room</option>
         <option value="Room 1">Room 1</option>
         <option value="Room 2">Room 2</option>
         <option value="Room 3 ">Room 3</option>
       </select>
 
-      <button type="submit" class="btn btn-success">Join</button>
-      <button type="button" class="btn btn-success">Add Room</button>
-    </div>
-  </form>
+            <button type="submit" class="btn btn-success">Join</button>
+
+            <button type="button" class="btn btn-success" (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed" aria-controls="addroomform">
+        Add Room
+      </button>
+
+            <div id="addroomform" [ngbCollapse]="isCollapsed">
+                <div class="card">
+                    <div class="card-body">
+                        <form #roomForm="ngForm" (ngSubmit)="addRoom(roomForm)">
+                            <div class="form-group">
+                                <label for="name ">Room Name</label>
+                                <input type="text " id="name " class="form-control" ngModel name="name " required />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password ">Room Password</label>
+                                <input type="password " id="password " class="form-control" ngModel name="password" required />
+                            </div>
+                            <div>
+                                <button class="btn btn-primary" type="submit" [disabled]="!roomForm.valid">
+                  Add the room
+                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 <!-- chat -->
-<div *ngIf="inRoom !== ''">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-8">
-        <p class="" style="margin: 0; padding: 0">
-          {{ inRoom }}
-        </p>
-      </div>
-      <div class="col-md-4">
-        <button
-          type="button"
-          class="btn btn-danger btn-xs"
-          (click)="leaveRoom()"
-        >
+<div *ngIf="inRoom !== '' ">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <p class=" " style="margin: 0; padding: 0">
+                    {{ inRoom }}
+                </p>
+            </div>
+            <div class="col-md-4">
+                <button type="button " class="btn btn-danger btn-xs" (click)="leaveRoom()">
           <i class="fas fa-sign-out-alt"></i>
         </button>
-      </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <div #chat class="messages" style="overflow: auto">
-    <!-- messages -->
-    <ul class="list-group">
-      <li
-      [ngClass]="m.sender !== username ? 'right' : ''"
-        class="list-group-item list-group-item-success m-2 p-0"
-        *ngFor="let m of messages"
-        [style.backgroundColor]="
-          m.sender == username
-            ? '#dcf8c6'
-            : '#ece5dd'
-        "
-        style="border-radius: 15px; width: 80%;"
-        
-      >
-
-      <span class="dropdown" *ngIf="m.sender == username">
-        <button
-        style="padding: 0; width: 40px;"
-          class="btn float-right "
-          type="button"
-          data-toggle="dropdown">
-          <i style="margin: 0; padding: 0; max-height: 15px;" class="fas fa-ellipsis-v"></i>
-        </button>
-        <ul class="dropdown-menu text-danger" style="background-color: beige; margin: 0; padding: 0;">
-          <li style="background-color: beige; margin: 0; padding: 0;">Delete</li> 
+    <div #chat class="messages" style="overflow: auto">
+        <!-- messages -->
+        <ul class="list-group">
+            <li [ngClass]="m.sender !== username ? 'right' : ''" class="list-group-item list-group-item-success m-2 p-0" *ngFor="let m of messages" [style.backgroundColor]="m.sender == username ? '#dcf8c6' : '#ece5dd'" style="border-radius: 15px; width: 80%">
+                <span class="dropdown" *ngIf="m.sender == username">
+          <button
+            style="padding: 0; width: 40px"
+            class="btn float-right"
+            type="button "
+            data-toggle="dropdown "
+          >
+            <i
+              style="margin: 0; padding: 0; max-height: 15px"
+              class="fas fa-ellipsis-v"
+            ></i>
+          </button>
+          <ul
+            class="dropdown-menu text-danger"
+            style="background-color: beige; margin: 0; padding: 0"
+          >
+            <li style="background-color: beige; margin: 0; padding: 0">
+              Delete
+            </li>
+          </ul>
+        </span>
+                <span>{{
+          m.sender == username ? "Me( " + m.sender + ") " : m.sender
+        }}</span>
+                <span class="float-right font-weight-lighter small">
+          <small>{{ m.date | date: "short " }}</small>
+        </span>
+                <hr />
+                <p>{{ m.message }}</p>
+            </li>
         </ul>
-      </span>
-        <span>{{ m.sender == username ? "Me("+m.sender+")" : m.sender  }}</span>
-        <span class="float-right font-weight-lighter small">
-          <small>{{ m.date | date: "short" }}</small>
-        </span>      
-        <hr />
-        <p>{{ m.message }}</p>
-      </li>
-    </ul>
-  </div>
+    </div>
 
-  <!-- enter message and send -->
-  <div class="sendmsg">
-    <form #messageForm="ngForm" (ngSubmit)="sendMessage(messageForm)">
-      <div class="input-group">
-        <input
-          autofocus
-          type="text"
-          name="message"
-          ngModel
-          class="form-control input-sm"
-          placeholder="Type your message here..."
-          required
-        />
-        <span class="input-group-btn">
+    <!-- enter message and send -->
+    <div class="sendmsg">
+        <form #messageForm="ngForm" (ngSubmit)="sendMessage(messageForm)">
+            <div class="input-group">
+                <input autofocus type="text " name="message " ngModel class="form-control input-sm" placeholder="Type your message here... " required />
+                <span class="input-group-btn">
           <button
             [disabled]="!messageForm.valid"
-            type="submit"
+            type="submit "
             class="btn btn-warning btn-sm"
-            id="btn-chat"
+            id="btn-chat "
           >
             <i class="fas fa-paper-plane"></i>
           </button>
         </span>
-      </div>
-    </form>
-  </div>
+            </div>
+        </form>
+    </div>
 </div>
