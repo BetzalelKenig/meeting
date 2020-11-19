@@ -50,8 +50,13 @@ export class MeetingGateway
   @SubscribeMessage('joinRoom')
   handleRoomJoin(client: Socket, payload) {
     client.join(payload.room);
+    
     if (this.messageService.rooms[payload.room]) {
-      this.messageService.rooms[payload.room].push(payload.username);
+      // for case of join whitout leave
+      if(!this.messageService.rooms[payload.room].includes(payload.username)){
+
+        this.messageService.rooms[payload.room].push(payload.username);
+      }
     } else {
       this.messageService.rooms[payload.room] = [payload.username];
     }

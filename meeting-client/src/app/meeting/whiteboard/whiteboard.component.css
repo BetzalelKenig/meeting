@@ -4,3 +4,10 @@ canvas {
     scroll-behavior: auto;
     border-radius: 20px;
 }
+
+.canvasbar{
+    border-radius: 20px;
+    max-height: 100px;
+     width: 700px; 
+     background-color: bisque;
+}
