@@ -12,7 +12,7 @@ export class MeetingService {
   userName: string;
   room = '';
   messages = new Subject();
-  //participants;
+  
   participantsChanged = new Subject();
   constructor(private authService: AuthService) {
     this.authService.user.subscribe((u) => {

@@ -8,7 +8,13 @@ import {
 import { Server, Socket } from 'socket.io';
 import { MessageService } from './services/message.service';
 import { MessageEntity } from './models/message.entity';
-
+/**
+ * move join and leave
+ * to hadleConnection and disconnected
+ * 
+ * 
+ * 
+ */
 @WebSocketGateway(3001)
 export class MeetingGateway
   implements OnGatewayConnection, OnGatewayDisconnect {
@@ -51,6 +57,7 @@ export class MeetingGateway
   @SubscribeMessage('joinRoom')
   handleRoomJoin(client: Socket, payload) {
     client.join(payload.room);
+    
     
     if (this.messageService.rooms[payload.room]) {
       // for case of join whitout leave

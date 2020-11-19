@@ -33,7 +33,7 @@
     <div #chat class="messages" style="overflow: auto;" >
         <!-- messages -->
         <ul class="list-group">
-            <li class="list-group-item list-group-item-success m-2 p-0" *ngFor="let m of messages">
+            <li class="list-group-item list-group-item-success m-2 p-0" *ngFor="let m of messages"  [style.backgroundColor]="m.sender == username ? 'rgba(255, 99, 71, 0.5)' : 'rgba(99, 200, 200, 0.5)'" style="border-radius: 15px;">
                 <span>{{ m.sender }}</span
         ><span class="float-right font-weight-lighter small"
           ><small>{{ m.date | date:'short' }}</small></span
@@ -60,17 +60,15 @@
               required
             />
             <span class="input-group-btn">
-              <input
+              <button
                 [disabled]="!messageForm.valid"
                 type="submit"
                 class="btn btn-warning btn-sm"
                 id="btn-chat"
-                value="Send"
-              />
+                
+              ><i class="fas fa-paper-plane"></i></button>
             </span>
     </div>
     </form>
 </div>
 </div>
-
-<div class="" ></div>

@@ -104,7 +104,7 @@ export class AuthService {
     const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
     const user = new User(name, token, expirationDate);
     this.user.next(user);
-    //this.autoLogout(expiresIn * 1000);
+    this.autoLogout(expiresIn * 1000);
     localStorage.setItem('userData', JSON.stringify(user));
   }
 
@@ -114,7 +114,7 @@ export class AuthService {
       return throwError(errorMessage);
     }
     console.log(errorRes);
-
+// need costimize exeptions acordinate to server
     switch (errorRes.error.error.message) {
       case 'EMAIL_EXISTS':
         errorMessage = 'This email is already exists';

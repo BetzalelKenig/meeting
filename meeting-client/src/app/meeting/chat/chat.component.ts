@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MeetingService } from '../meeting.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-chat',
@@ -19,7 +20,7 @@ export class ChatComponent implements OnInit {
   username;
   inRoom = '';
   @Output() room = new EventEmitter<string>();
-  
+
   private chat: ElementRef;
 
   @ViewChild('chat', { static: false }) set content(content: ElementRef) {
@@ -32,13 +33,19 @@ export class ChatComponent implements OnInit {
 
   defaultRoom = 'Main Room';
 
-  constructor(private meetingService: MeetingService) {}
+  constructor(
+    private meetingService: MeetingService,
+    private authService: AuthService
+  ) {}
   socket = this.meetingService.socket;
 
   ngOnInit(): void {
     this.meetingService.messages.subscribe((m: []) => {
       this.messages.push(...m);
       console.log(this.messages);
+    });
+    this.authService.user.subscribe((user) => {
+      this.username = user.name;
     });
 
     this.socket.on('chatToClient', (messageData) => {
@@ -49,9 +56,8 @@ export class ChatComponent implements OnInit {
   }
 
   scrollToBottom(): void {
-    
-if(this.chat != undefined)
-    this.chat.nativeElement.scrollTop = this.chat.nativeElement.scrollHeight;
+    if (this.chat != undefined)
+      this.chat.nativeElement.scrollTop = this.chat.nativeElement.scrollHeight;
   }
   ngAfterViewChecked() {
     this.scrollToBottom();
@@ -61,7 +67,6 @@ if(this.chat != undefined)
     this.inRoom = form.value.room;
     this.room.emit(this.inRoom);
     this.meetingService.joinRoom(this.inRoom);
-    
   }
 
   leaveRoom() {
@@ -71,7 +76,6 @@ if(this.chat != undefined)
   }
 
   sendMessage(messageForm: NgForm) {
-    
     const { name } = JSON.parse(localStorage.getItem('userData'));
     let messageData = {
       date: new Date(),
@@ -84,8 +88,6 @@ if(this.chat != undefined)
   }
 
   rightMessage(date, sender, message) {
-    
-    
     let messageData = {
       date: new Date(date),
       sender: sender,

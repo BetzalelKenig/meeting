@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from '../models/user.entity';
+import { UserEntity, UserRole } from '../models/user.entity';
 import { Repository } from 'typeorm';
 import { Observable, from, throwError } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
@@ -21,6 +21,7 @@ export class UserService {
         const newUser = new UserEntity();
         newUser.username = user.username;
         newUser.password = passwordHash;
+        newUser.role = UserRole.USER;
 
         return from(this.userRepository.save(newUser)).pipe(
           map((user: User) => {
