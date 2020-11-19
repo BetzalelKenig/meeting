@@ -1,4 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MeetingService } from '../meeting.service';
 
@@ -11,7 +19,15 @@ export class ChatComponent implements OnInit {
   username;
   inRoom = '';
   @Output() room = new EventEmitter<string>();
+  
+  private chat: ElementRef;
 
+  @ViewChild('chat', { static: false }) set content(content: ElementRef) {
+    if (content) {
+      // initially setter gets called with undefined
+      this.chat = content;
+    }
+  }
   messages = [];
 
   defaultRoom = 'Main Room';
@@ -20,18 +36,25 @@ export class ChatComponent implements OnInit {
   socket = this.meetingService.socket;
 
   ngOnInit(): void {
-
-    this.meetingService.messages.subscribe((m:[]) => {
+    this.meetingService.messages.subscribe((m: []) => {
       this.messages.push(...m);
       console.log(this.messages);
-      
-    })
-   
+    });
+
     this.socket.on('chatToClient', (messageData) => {
       const { room, ...data } = messageData;
 
       this.rightMessage(data.date, data.sender, data.message);
     });
+  }
+
+  scrollToBottom(): void {
+    
+if(this.chat != undefined)
+    this.chat.nativeElement.scrollTop = this.chat.nativeElement.scrollHeight;
+  }
+  ngAfterViewChecked() {
+    
   }
 
   joinRoom(form: NgForm) {
@@ -41,18 +64,16 @@ export class ChatComponent implements OnInit {
   }
 
   leaveRoom() {
-    
-    
     this.meetingService.leaveRoom(this.inRoom);
     this.inRoom = '';
     this.messages = [];
-
   }
 
   sendMessage(messageForm: NgForm) {
+    
     const { name } = JSON.parse(localStorage.getItem('userData'));
     let messageData = {
-      date: new Date().toDateString(),
+      date: new Date(),
       sender: name,
       message: messageForm.value.message,
     };
@@ -62,12 +83,15 @@ export class ChatComponent implements OnInit {
   }
 
   rightMessage(date, sender, message) {
+    
+    
     let messageData = {
-      date: date,
+      date: new Date(date),
       sender: sender,
       message: message,
     };
     this.messages.push(messageData);
+    this.scrollToBottom();
   }
 
   // Todo allow user to enter in new line

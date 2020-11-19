@@ -3,6 +3,7 @@ canvas {
     overflow: scroll !important;
     scroll-behavior: auto;
     border-radius: 20px;
+    cursor: url(../../../assets/pen.png), auto;
 }
 
 .canvasbar{
