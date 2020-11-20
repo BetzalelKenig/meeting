@@ -18,13 +18,153 @@ word-wrap: break-word;
 }
 
 .about{
-  
+  width: 300px;
   border: blue 3px solid;
   border-radius: 20px;
-  margin: auto;
+  margin: 50px;
   padding: 5px;
 }
 
 p{
-  color: aqua;
+  color: brown;
 }
+
+.fa {
+  padding: 20px;
+  font-size: 30px;
+  width: 30px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50%;
+}
+
+/* #LinkedIn {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+}
+
+#LinkedIn {
+  background-image: url('http://paksef.com/wp-content/uploads/2015/08/Linkedin-icon-hover.png');
+}
+#LinkedIn:hover {
+  background-image: url('http://paksef.com/wp-content/uploads/2015/08/Linkedin-icon.png');} */
+
+
+  /* Remove any list styling */
+section ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  position: relative;
+  display: inline-block;
+  line-height: 60px;
+}
+
+li a {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+}
+
+/* Front */
+li span {
+	display: inline-block;
+	width: 60px;
+  color: #f5f5f5;
+	transition: transform 0.3s;
+	transform-origin: top left;
+	transform-style: preserve-3d;
+}
+
+section li{
+  margin: 20px;
+  text-align: center;
+}
+
+/* When we animate the flipping, we want the initial face of the cube to rotate so that we can't see that face, as if you were flipping a dice over. We rotate it 90 degrees to flip the cube. The translateY is necessary to make flipping the cube seem more realistic. If you play around with the number, you'll see this effect. */
+/* li:hover span,
+li:focus span {
+  transform: rotateX(90deg) 
+             translateY(-33px);
+} */
+
+/* The before element is basically the same as the actual span element, except it is rotated -90 degrees so so that we can't actually see it. We have rotated it so that it is essentially the bottom face of a cube right now. We also need to make sure we add the background/font colour here as without it the span would have a transparent background. We are not hovering over this span until the animation has completed. */
+section li span::before {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 100%;
+	height: 100%;
+  color: #eaeaea;
+	content: "\f0c1";
+	transition: background 0.3s;
+	transform: rotateX(-90deg);
+	transform-origin: top left;
+}
+
+/* Back font color */
+/* li:hover span::before,
+li:focus span::before {
+  color: #eaeaea;
+} */
+
+/* Set FontAwesome on the icons */
+.icon {
+  font-family: FontAwesome;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* Facebook */
+li span.facebook {
+  background: #4662a0;
+  
+}
+li span.facebook::before,
+li:hover span.facebook::before,
+li:focus span.facebook::before {
+  background: #384f80;
+ 
+  
+}
+
+/* GitHub */
+li span.github {
+  background: #d6d5d5;
+  color: #333;
+}
+li span.github::before,
+li:hover span.github::before,
+li:focus span.github::before {
+  background: #afaeae;
+  color: #333;
+  
+}
+
+
+
+
+
+/* LinkedIn */
+li span.linkedin {
+  background: #007ebb;
+}
+li span.linkedin::before,
+li:hover span.linkedin::before,
+
+li:focus span.linkedin::before {
+  background: #006799;
+}
+
+section h3 {
+  color: green;
+}
+
