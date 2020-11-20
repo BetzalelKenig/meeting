@@ -31,7 +31,7 @@ export class MeetingGateway
   }
 
   handleDisconnect(client: any) {
-    console.log('disconnected',client);
+    console.log('disconnected');
   }
   // get the coordinates from client and emit them to the others
   @SubscribeMessage('draw-coordinates')

@@ -2,7 +2,8 @@ body {
     background: rgba(58, 163, 37, 0.81) !important;
     background-color: rgba(0, 0, 0, 0.81) !important;
     color: rgb(22, 223, 22) !important;
-    overflow: hidden;
+    /* overflow: hidden; */
+    overflow-x: hidden;
 }
 
 button {

@@ -1,7 +1,6 @@
 import {
   Component,
   OnInit,
-  Input,
   Output,
   EventEmitter,
   ViewChild,
@@ -17,7 +16,8 @@ import { AuthService } from 'src/app/auth/auth.service';
   styleUrls: ['./chat.component.css'],
 })
 export class ChatComponent implements OnInit {
-  public isCollapsed = true;
+  public isNewRoomCollapsed = true;
+  public isJoinRoomCollapsed = true;
   username;
   inRoom = '';
   @Output() room = new EventEmitter<string>();
@@ -108,4 +108,6 @@ export class ChatComponent implements OnInit {
   }
 
   addRoom(roomForm) {}
+
+  showPss(){}
 }

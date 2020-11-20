@@ -1,0 +1,30 @@
+.client{
+
+background-color: rgb(202, 202, 64);
+border: blue 3px solid;
+border-radius: 20px;
+padding: 10px;
+word-wrap: break-word;
+}
+
+.server{
+  
+  background-color:rgb(202, 202, 64);
+  border: blue 3px solid;
+  border-radius: 20px;
+  padding: 10px;
+  word-wrap: break-word;
+  
+}
+
+.about{
+  
+  border: blue 3px solid;
+  border-radius: 20px;
+  margin: auto;
+  padding: 5px;
+}
+
+p{
+  color: aqua;
+}

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, HostListener, AfterViewChecked } from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { pairwise, switchMap, takeUntil } from 'rxjs/operators';
 
@@ -11,7 +11,7 @@ import * as FileSaver from 'file-saver';
   templateUrl: './whiteboard.component.html',
   styleUrls: ['./whiteboard.component.css'],
 })
-export class WhiteboardComponent implements OnInit {
+export class WhiteboardComponent implements OnInit, AfterViewChecked {
   @ViewChild('canvas', { static: true }) public canvas: ElementRef;
   @ViewChild('bgColor', { static: true }) public bgColor: ElementRef;
 
@@ -26,6 +26,10 @@ export class WhiteboardComponent implements OnInit {
   canvasEl: HTMLCanvasElement;
 
   constructor(private meetingService: MeetingService) {}
+
+  ngAfterViewChecked(): void {
+    this.ctx.lineWidth = this.size;
+  }
   socket = this.meetingService.socket;
 
 
@@ -57,6 +61,8 @@ export class WhiteboardComponent implements OnInit {
       }.bind(this)
     );
   }
+
+  
   
   public ngAfterViewInit() {
     this.canvasEl = this.canvas.nativeElement;
