@@ -5,6 +5,7 @@ import {
   EventEmitter,
   ViewChild,
   ElementRef,
+  OnDestroy,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MeetingService } from '../meeting.service';
@@ -15,13 +16,13 @@ import { AuthService } from 'src/app/auth/auth.service';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css'],
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnDestroy {
   public isNewRoomCollapsed = true;
   public isJoinRoomCollapsed = true;
   username;
   inRoom = '';
   @Output() room = new EventEmitter<string>();
-
+  socket;
   private chat: ElementRef;
 
   @ViewChild('chat', { static: false }) set content(content: ElementRef) {
@@ -38,9 +39,15 @@ export class ChatComponent implements OnInit {
     private meetingService: MeetingService,
     private authService: AuthService
   ) {}
-  socket;
+
+  
 
   ngOnInit(): void {
+this.meetingService.socketChanged.subscribe(socket =>{
+  this.socket = socket;
+})
+
+
     this.meetingService.messages.subscribe((m: []) => {
       this.messages.push(...m);
     });
@@ -58,16 +65,34 @@ export class ChatComponent implements OnInit {
   }
 
   joinRoom(form: NgForm) {
-    this.socket = this.meetingService.socket;
+    
     this.inRoom = form.value.room;
     this.room.emit(this.inRoom);
-    this.meetingService.joinRoom(this.inRoom);
+    this.meetingService.joinRoom(this.inRoom, form.value.roompassord);
 
     this.socket.on('chatToClient', (messageData) => {
+      if(messageData.error){}
       const { room, ...data } = messageData;
 
       this.rightMessage(data.date, data.sender, data.message);
     });
+  }
+
+  addRoom(roomForm: NgForm) {
+    if(roomForm.value.password !== roomForm.value.verifypass){
+console.log(roomForm.value.password,'!==', roomForm.value.verify);
+
+    }else{
+      this.inRoom = roomForm.value.name;
+      this.room.emit(this.inRoom);
+      this.meetingService.addRoom(this.inRoom, roomForm.value.password);
+ 
+      this.socket.on('chatToClient', (messageData) => {
+       if(messageData.error){}
+       const { room, ...data } = messageData;
+       this.rightMessage(data.date, data.sender, data.message);
+     });
+    }     
   }
 
   leaveRoom() {
@@ -107,7 +132,12 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  addRoom(roomForm) {}
+  
 
   showPss(){}
+
+  ngOnDestroy(): void {
+    // check what if inRoom == undefine ???
+    this.leaveRoom();
+  }
 }

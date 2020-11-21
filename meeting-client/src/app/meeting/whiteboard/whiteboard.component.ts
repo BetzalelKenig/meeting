@@ -21,16 +21,42 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
   @Input() markerColor = '#0000ff';
   @Input() size = 5;
   @Input() bg = '#00ffff';
-
+  socket;
   public ctx: CanvasRenderingContext2D;
   canvasEl: HTMLCanvasElement;
 
   constructor(private meetingService: MeetingService) {}
 
+ngOnInit(): void {
+
+  this.meetingService.socketChanged.subscribe(socket=>{
+    if(socket){
+      this.socket = socket;
+
+      this.socket.on(
+        'draw-this',
+        function (data) {
+          this.drawOnCanvas(data.prevPos, data.currentPos, data.color, data.size);
+        }.bind(this)
+      );
+      this.socket.on(
+        'clear-board',
+        function () {
+          
+          
+          this.clearMe();
+        }.bind(this)
+      );  
+    }
+  })
+  }
+
+
+
   ngAfterViewChecked(): void {
     this.ctx.lineWidth = this.size;
   }
-  socket = this.meetingService.socket;
+  
 
 
   resizeForChat(w){
@@ -45,23 +71,7 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
   //     canvasEl.height = window.innerHeight * 0.78;
   // }
 
-  ngOnInit(): void {
-    this.socket.on(
-      'draw-this',
-      function (data) {
-        this.drawOnCanvas(data.prevPos, data.currentPos, data.color, data.size);
-      }.bind(this)
-    );
-    this.socket.on(
-      'clear-board',
-      function () {
-        
-        
-        this.clearMe();
-      }.bind(this)
-    );
-  }
-
+ 
   
   
   public ngAfterViewInit() {
@@ -110,7 +120,7 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
         // this method do the actual drawing
         this.drawOnCanvas(prevPos, currentPos, this.markerColor, this.size);
         this.socket.emit('draw-coordinates', {
-          room: this.meetingService.room,
+          room: this.meetingService.roomName,
           prevPos: prevPos,
           currentPos: currentPos,
           color: this.markerColor,
@@ -150,13 +160,15 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
 
         // this method do the actual drawing
         this.drawOnCanvas(prevPos, currentPos, this.markerColor, this.size);
-        this.socket.emit('draw-coordinates', {
-          room: this.meetingService.room,
-          prevPos: prevPos,
-          currentPos: currentPos,
-          color: this.markerColor,
-          size: this.size,
-        });
+        if(this.socket){
+          this.socket.emit('draw-coordinates', {
+            room: this.meetingService.roomName,
+            prevPos: prevPos,
+            currentPos: currentPos,
+            color: this.markerColor,
+            size: this.size,
+          });
+        }
       });
   }
 
@@ -171,16 +183,12 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
     if (!this.ctx) {
       return;
     }
-    
-
     this.ctx.beginPath();
-
     if (prevPos) {
       this.ctx.moveTo(prevPos.x, prevPos.y);
       this.ctx.lineTo(currentPos.x, currentPos.y);
       this.ctx.stroke();
     }
-
     this.ctx.strokeStyle = this.markerColor;
   }
 
@@ -204,8 +212,9 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
   clear() {
     
     this.clearMe()
-
-    this.socket.emit('clear', this.meetingService.room);
+if(this.socket){
+  this.socket.emit('clear', this.meetingService.roomName);
+}
   }
   clearMe(){
     

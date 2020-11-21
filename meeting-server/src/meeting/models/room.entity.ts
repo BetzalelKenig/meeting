@@ -12,5 +12,5 @@ export class RoomEntity {
   creator: string;
 
   @Column()
-  passowrd: string;
+  password: string;
 }
