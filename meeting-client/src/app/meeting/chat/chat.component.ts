@@ -24,6 +24,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   @Output() room = new EventEmitter<string>();
   socket;
   private chat: ElementRef;
+  allRooms;
 
   @ViewChild('chat', { static: false }) set content(content: ElementRef) {
     if (content) {
@@ -33,19 +34,26 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
   messages = [];
 
-  defaultRoom = 'Main Room';
+  defaultRoom = 'Public Room';
 
   constructor(
     private meetingService: MeetingService,
     private authService: AuthService
-  ) {}
+  ) { }
 
-  
+
 
   ngOnInit(): void {
-this.meetingService.socketChanged.subscribe(socket =>{
-  this.socket = socket;
-})
+    this.meetingService.socketChanged.subscribe(socket => {
+      this.socket = socket;
+    })
+
+
+    //this.allRooms = this.meetingService.allRooms;
+
+    this.meetingService.allRooms.subscribe((rooms: string[]) => {
+      this.allRooms = rooms;
+    })
 
 
     this.meetingService.messages.subscribe((m: []) => {
@@ -65,13 +73,23 @@ this.meetingService.socketChanged.subscribe(socket =>{
   }
 
   joinRoom(form: NgForm) {
-    
-    this.inRoom = form.value.room;
+
+    // get the room name after login to room
+    this.meetingService.roomName.subscribe(room => {
+      this.inRoom = room;
+    })
+
     this.room.emit(this.inRoom);
-    this.meetingService.joinRoom(this.inRoom, form.value.roompassord);
+    this.meetingService.joinRoom(form.value.room, form.value.roompassord);
+
+    this.socket.on('errors', (error => {
+      console.log(error);
+
+    }))
+
 
     this.socket.on('chatToClient', (messageData) => {
-      if(messageData.error){}
+      if (messageData.error) { }
       const { room, ...data } = messageData;
 
       this.rightMessage(data.date, data.sender, data.message);
@@ -79,20 +97,20 @@ this.meetingService.socketChanged.subscribe(socket =>{
   }
 
   addRoom(roomForm: NgForm) {
-    if(roomForm.value.password !== roomForm.value.verifypass){
-console.log(roomForm.value.password,'!==', roomForm.value.verify);
+    if (roomForm.value.password !== roomForm.value.verifypass) {
+      console.log(roomForm.value.password, '!==', roomForm.value.verify);
 
-    }else{
+    } else {
       this.inRoom = roomForm.value.name;
       this.room.emit(this.inRoom);
       this.meetingService.addRoom(this.inRoom, roomForm.value.password);
- 
+
       this.socket.on('chatToClient', (messageData) => {
-       if(messageData.error){}
-       const { room, ...data } = messageData;
-       this.rightMessage(data.date, data.sender, data.message);
-     });
-    }     
+        if (messageData.error) { }
+        const { room, ...data } = messageData;
+        this.rightMessage(data.date, data.sender, data.message);
+      });
+    }
   }
 
   leaveRoom() {
@@ -108,6 +126,7 @@ console.log(roomForm.value.password,'!==', roomForm.value.verify);
       sender: name,
       message: messageForm.value.message,
     };
+    console.log(messageData);
 
     messageForm.reset();
     this.socket.emit('sendMessage', { room: this.inRoom, ...messageData });
@@ -132,9 +151,14 @@ console.log(roomForm.value.password,'!==', roomForm.value.verify);
     }
   }
 
-  
+  deleteMessage(id: number) { 
+    this.meetingService.deleteMessgae(id);
+    
+  }
 
-  showPss(){}
+
+
+  showPss() { }
 
   ngOnDestroy(): void {
     // check what if inRoom == undefine ???

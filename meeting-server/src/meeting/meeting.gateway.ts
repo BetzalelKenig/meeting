@@ -20,7 +20,7 @@ import { of } from 'rxjs';
 @WebSocketGateway(3001)
 export class MeetingGateway
   implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private messageService: MessageService) {}
+  constructor(private messageService: MessageService) { }
 
   // server for send the massage to averyone
   @WebSocketServer() wss: Server;
@@ -35,12 +35,14 @@ export class MeetingGateway
   // get the coordinates from client and emit them to the others
   @SubscribeMessage('draw-coordinates')
   handleDraw(client: any, payload: any): any {
+
     // send to others in the room
     this.wss.to(payload.room).emit('draw-this', payload);
   }
 
   @SubscribeMessage('clear')
   handleClear(client: any, payload: any): any {
+
     // clear others
     client.broadcast.to(payload).emit('clear-board');
   }
@@ -54,20 +56,14 @@ export class MeetingGateway
 
   @SubscribeMessage('joinRoom')
   handleRoomJoin(client: Socket, payload) {
-        
-      if(this.messageService.validateRoom(payload.room, payload.password)) {
+
+    this.messageService.validateRoom(payload.room, payload.password).then(c => {
+
+      if (payload.password && payload.room && c === true) {
         client.join(payload.room);
 
-         if (this.messageService.rooms[payload.room]) {
-          // for case of join whitout leave
-          if (
-            !this.messageService.rooms[payload.room].includes(payload.username)
-          ) {
-            this.messageService.rooms[payload.room].push(payload.username);
-          }
-        } else {
-          this.messageService.rooms[payload.room] = [payload.username];
-        }
+        this.messageService.addToParticipants(payload.room, payload.username)
+
         this.messageService.getRoomMessages(payload.room).then(m => {
           client.emit('roomMessages', m);
         });
@@ -76,20 +72,23 @@ export class MeetingGateway
           .emit(
             'joinedRoom',
             payload.username,
+            payload.room,
             this.messageService.rooms[payload.room],
           );
       } else {
-        client.emit('error', 'wrong password');
+        client.emit('errors', 'wrong password');
       }
-  
+    })
+
+
     // let clients = this.wss.sockets.adapter.rooms['Room Name'].sockets;
     // console.log(clients);
   }
 
   @SubscribeMessage('addRoom')
   handleNewRoom(client: Socket, payload) {
-    
-    
+
+
     // for error handling
     let res = this.messageService
       .addRoom({
@@ -100,23 +99,22 @@ export class MeetingGateway
       .pipe(
         map(room => {
           client.join(payload.room);
-          console.log(room);
-          
+
           if (this.messageService.rooms[payload.room]) {
             // for case of join whitout leave
-            
+
             if (
               !this.messageService.rooms[payload.room].includes(
                 payload.username,
               )
             ) {
-              
+
               this.messageService.rooms[payload.room].push(payload.username);
             }
           } else {
             this.messageService.rooms[payload.room] = [payload.username];
-            
-            
+
+
           }
           this.messageService.getRoomMessages(payload.room).then(m => {
             client.emit('roomMessages', m);
@@ -131,8 +129,9 @@ export class MeetingGateway
         }),
         catchError(err => {
           console.log(err);
-          
-          return of({ error: err.message })}),
+
+          return of({ error: err.message })
+        }),
       );
   }
 

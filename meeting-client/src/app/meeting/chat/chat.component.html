@@ -3,14 +3,13 @@
     <h3 class="text-success">Select Chat Room</h3>
     <form #roomForm="ngForm" (ngSubmit)="joinRoom(roomForm)">
         <div class="form-group">
-            <input type="text"  name="room" class="form-control">
-            <!-- <select value="Main Room" [(ngModel)]="defaultRoom" name="room" class="form-control">
-                <option value="Main Room">Main Room
+            <!-- <input type="text"  name="room" class="form-control"> -->
+            <select value="Public Room" [(ngModel)]="defaultRoom" name="room" class="form-control">
+                <option value="Public Room">Public Room
                 </option>
-                <option value="Room 1">Room 1</option>
-                <option value="Room 2">Room 2</option>
-                <option value="Room 3">Room 3</option>
-            </select> -->
+                <option *ngFor='let room of allRooms' [value]="room">{{room}}</option>
+               
+            </select>
 
             <button 
             type="button" 
@@ -113,12 +112,12 @@
             [style.backgroundColor]="m.sender == username ? '#dcf8c6' : '#ece5dd'"
             style="border-radius: 15px; width: 80%">
                 <span class="dropdown" *ngIf="m.sender == username">
-                    <button style="padding: 0; width: 40px" class="btn float-right" type="button "
-                        data-toggle="dropdown ">
+                    <button style="padding: 0; width: 40px" class="btn float-right" type="button"
+                        data-toggle="dropdown">
                         <i style="margin: 0; padding: 0; max-height: 15px" class="fas fa-ellipsis-v"></i>
                     </button>
-                    <ul class="dropdown-menu text-danger" style="background-color: beige; margin: 0; padding: 0">
-                        <li style="background-color: beige; margin: 0; padding: 0">
+                    <ul class="dropdown-menu text-danger" role="button" style="background-color: beige; margin: 0; padding: 0">
+                        <li (click)="deleteMessage(m.id)" style="background-color: beige; margin: 0; padding: 0">
                             Delete
                         </li>
                     </ul>
@@ -139,11 +138,11 @@
     <div class="sendmsg">
         <form #messageForm="ngForm" (ngSubmit)="sendMessage(messageForm)">
             <div class="input-group">
-                <input autofocus type="text " name="message " ngModel class="form-control input-sm"
+                <input autofocus type="text" name="message" ngModel class="form-control input-sm"
                     placeholder="Type your message here... " required />
                 <span class="input-group-btn">
-                    <button [disabled]="!messageForm.valid" type="submit " class="btn btn-warning btn-sm"
-                        id="btn-chat ">
+                    <button [disabled]="!messageForm.valid" type="submit" class="btn btn-warning btn-sm"
+                        id="btn-chat">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </span>

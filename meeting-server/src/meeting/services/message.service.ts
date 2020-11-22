@@ -12,6 +12,9 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 
 @Injectable()
 export class MessageService {
+
+  // Save active rooms white their participants
+  // for sending the participants to new participants
   rooms = {};
 
   constructor(
@@ -20,7 +23,7 @@ export class MessageService {
     @InjectRepository(RoomEntity)
     private readonly roomRepository: Repository<RoomEntity>,
     private authService: AuthService,
-  ) {}
+  ) { }
 
   createMessage(message: MessageEntity): Observable<MessageEntity> {
     return from(this.messageRepository.save(message));
@@ -34,41 +37,63 @@ export class MessageService {
     return this.messageRepository.delete(id);
   }
 
-  joinRoom(roomName: string, password: string){
+  joinRoom(roomName: string, password: string) {
     return this.validateRoom(roomName, password);
   }
 
   addRoom(room: CreateRoomDto): Observable<any> {
-    
 
-        const newRoom = new RoomEntity();
-        newRoom.name = room.name;
-        newRoom.creator = room.creator;
-        newRoom.password = room.password;
 
-        return from(this.roomRepository.save(newRoom)).pipe(
-          map((room: RoomEntity) => {
-            const { password, ...result } = room;
-            return result;
-          }),
-          catchError(err => {
-            console.log(err);
-            
-            return throwError(err)}),
-       
+    const newRoom = new RoomEntity();
+    newRoom.name = room.name;
+    newRoom.creator = room.creator;
+    newRoom.password = room.password;
+
+    return from(this.roomRepository.save(newRoom)).pipe(
+      map((room: RoomEntity) => {
+        const { password, ...result } = room;
+        return result;
+      }),
+      catchError(err => {
+        console.log(err);
+
+        return throwError(err)
+      }),
+
     );
   }
 
-  findRoomByName(name: string) {
-    return this.roomRepository.findOne({ name });
+  addToParticipants(roomName: string, username) {
+    // Add to participants if room allready active
+    if (this.rooms[roomName]) {
+      // Prevent duplicate participant in room
+      if (!this.rooms[roomName].includes(username))
+        this.rooms[roomName].push(username)
+    } else { // Add the room ro active room white the first participant
+      this.rooms[roomName] = [username]
+    }
+  }
+
+  async findRoomByName(name: string) {
+
+    let room = await this.roomRepository.findOne({ name: name })
+
+    return this.roomRepository.findOne({ name: name });
   }
 
   getRooms() {
     return this.roomRepository.find();
   }
 
-  async validateRoom(roomName: string, password: string) {
-   let room = await this.findRoomByName(roomName);
-   return room.password === password;
+  async getRoomsNames() {
+    let rooms = await this.getRooms();
+    return rooms.map(room => room.name)
   }
+
+  validateRoom(roomName: string, password: string) {
+    return this.findRoomByName(roomName).then(room => {
+      return room.password === password
+    });
+  }
+
 }
