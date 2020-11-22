@@ -14,6 +14,7 @@ import * as FileSaver from 'file-saver';
 export class WhiteboardComponent implements OnInit, AfterViewChecked {
   @ViewChild('canvas', { static: true }) public canvas: ElementRef;
   @ViewChild('bgColor', { static: true }) public bgColor: ElementRef;
+  @ViewChild('inp', { static: true }) public inp: ElementRef;
 
   public width = window.innerWidth * 0.55;
   public height = window.innerHeight * 0.75;
@@ -42,7 +43,7 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
         this.socket.on(
           'draw-this',
           function (data) {
-            console.log('draw from server =======');
+           
             
             this.drawOnCanvas(data.prevPos, data.currentPos, data.color, data.size);
           }.bind(this)
@@ -59,7 +60,8 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
     })
   }
 
-
+  
+  
 
   ngAfterViewChecked(): void {
     this.ctx.lineWidth = this.size;
@@ -98,6 +100,9 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
     this.ctx.fillRect(0, 0, this.width, this.height);
     //this.image = this.canvas.nativeElement.toDataURL('image/png');
     this.captureEvents(this.canvasEl);
+
+
+  
   }
 
   private captureEvents(canvasEl: HTMLCanvasElement) {
@@ -311,6 +316,23 @@ this.canvasEl.on('mouse:up', function(o){
     );
   }
 
+
+
+
+//    handleImage(e){
+//     var reader = new FileReader();
+//     reader.onload = function(event){
+//         var img = new Image();
+//         img.onload = function(){
+//             canvas.width = img.width;
+//             canvas.height = img.height;
+//             ctx.drawImage(img,0,0);
+//         }
+//         img.src = event.target.result;
+//     }
+//     reader.readAsDataURL(e.target.files[0]);     
+// }
+
   clear() {
 
 
@@ -327,4 +349,51 @@ this.canvasEl.on('mouse:up', function(o){
     this.ctx.fillRect(0, 0, this.width, this.height);
     //this.ctx.clearRect(0, 0, this.width, this.height);
   }
+
+  onChangeEvent(event: any){
+
+    console.log(event.target.value);
+    
+      
+    let img = new Image();
+    img.onload = this.drawImage;
+    img.onerror = failed;
+    img.src = URL.createObjectURL(this.inp.nativeElement.files[0]);
+    console.log(this.ctx,'==========');
+    
+    
+    function failed() {
+    console.error("The provided file couldn't be loaded as an Image media");
+    }
+  }
+ 
+   drawImage (){
+     this.canvasEl = this.canvas.nativeElement;
+     this.ctx = this.canvasEl.getContext('2d');
+     console.log(this.ctx,'==========draw image');
+
+    this.canvasEl.width = this.width;
+    this.canvasEl.height = this.height;
+  
+ 
+    this.ctx.drawImage(this.canvasEl, 0,0);
+    }
+
 }
+
+// document.getElementById('inp').onchange = function(e) {
+//   var img = new Image();
+//   img.onload = draw;
+//   img.onerror = failed;
+//   img.src = URL.createObjectURL(this.files[0]);
+// };
+// function draw() {
+//   var canvas = document.getElementById('canvas');
+//   canvas.width = this.width;
+//   canvas.height = this.height;
+//   var ctx = canvas.getContext('2d');
+//   ctx.drawImage(this, 0,0);
+// }
+// function failed() {
+//   console.error("The provided file couldn't be loaded as an Image media");
+// }

@@ -19,7 +19,9 @@ export class MeetingService {
   socketChanged = new BehaviorSubject(null);
   participantsChanged = new Subject();
   allRooms = new Subject();
+socketOptions;
 
+  
 
   constructor(
     private authService: AuthService,
@@ -30,8 +32,22 @@ export class MeetingService {
         this.userName = u.name;
       }
     });
+    const userData: {
+      name: string;
+      access_token: string;
+      _tokenExpirationDate: string;
+    } = JSON.parse(localStorage.getItem('userData'));
+    this.socketOptions = {
+      transportOptions: {
+        polling: {
+          extraHeaders: {
+            Authorization: userData.access_token, //'Bearer h93t4293t49jt34j9rferek...'
+          }
+        }
+      }
+   };
 
-    this.http.get('http://localhost:3000/meeting/rooms').subscribe(rooms => {
+    this.http.get('http://localhost:3000/meeting/rooms',this.socketOptions).subscribe(rooms => {
       this.allRooms.next(rooms);
 
     })

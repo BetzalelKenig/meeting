@@ -22,7 +22,7 @@ export class UserRepository extends Repository<User> {
       await user.save();
     } catch (error) {
       console.log(error);
-      
+
       if (error.code === '23505') {
         // duplicate username
         throw new ConflictException('Username already exists');
@@ -47,5 +47,9 @@ export class UserRepository extends Repository<User> {
 
   private async hashPassword(password: string, salt: string): Promise<string> {
     return bcrypt.hash(password, salt);
+  }
+
+  findByUsername(username: string) {
+    return this.findOne({ username });
   }
 }

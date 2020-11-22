@@ -10,6 +10,8 @@ import { MessageService } from './services/message.service';
 import { MessageEntity } from './models/message.entity';
 import { catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { UseGuards } from '@nestjs/common';
+import { WsGuard } from './ws.guard';
 /**
  * move join and leave
  * to hadleConnection and disconnected
@@ -22,8 +24,14 @@ export class MeetingGateway
   // server for send the massage to averyone
   @WebSocketServer() wss: Server;
 
+  @UseGuards(WsGuard)
   handleConnection(client: any, ...args: any[]) {
+    let auth_token = client.handshake.headers.authorization;
+    // get the token itself without "Bearer"
+    auth_token = auth_token.split(' ')[1];
     console.log('connection');
+    console.log(auth_token);
+    
   }
 
   handleDisconnect(client: any) {
