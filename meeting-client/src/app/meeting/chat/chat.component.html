@@ -3,12 +3,12 @@
     <h3 class="text-success">Select Chat Room</h3>
     <form #roomForm="ngForm" (ngSubmit)="joinRoom(roomForm)">
         <div class="form-group">
-            <select value="Main Room" [(ngModel)]="defaultRoom" name="room" class="form-control">
-                <option value="Main Room">Main Room
+            <!-- <input type="text"  name="room" class="form-control"> -->
+            <select value="Public Room" [(ngModel)]="defaultRoom" name="room" class="form-control">
+                <option value="Public Room">Public Room
                 </option>
-                <option value="Room 1">Room 1</option>
-                <option value="Room 2">Room 2</option>
-                <option value="Room 3">Room 3</option>
+                <option *ngFor='let room of allRooms' [value]="room">{{room}}</option>
+               
             </select>
 
             <button 
@@ -23,14 +23,14 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="newpass ">Enter Room Passowrd</label>
+                            <label for="roompassord ">Enter Room Passowrd</label>
                             
                             <input 
                             type="password" 
-                            id="newpass" 
+                            id="roompassord" 
                             class="form-control" 
                             ngModel
-                            name="newpass" 
+                            name="roompassord" 
                             required />
                             <!-- <input type="checkbox" onclick="showPss()"/>
                             <svg aria-hidden="true" class="stUf5b" fill="currentColor" focusable="false" width="24px" height="24px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg"><path d="M12,7c-2.48,0-4.5,2.02-4.5,4.5S9.52,16,12,16s4.5-2.02,4.5-4.5S14.48,7,12,7z M12,14.2c-1.49,0-2.7-1.21-2.7-2.7 c0-1.49,1.21-2.7,2.7-2.7s2.7,1.21,2.7,2.7C14.7,12.99,13.49,14.2,12,14.2z"></path><path d="M12,4C7,4,2.73,7.11,1,11.5C2.73,15.89,7,19,12,19s9.27-3.11,11-7.5C21.27,7.11,17,4,12,4z M12,17 c-3.79,0-7.17-2.13-8.82-5.5C4.83,8.13,8.21,6,12,6s7.17,2.13,8.82,5.5C19.17,14.87,15.79,17,12,17z"></path></svg> -->
@@ -112,12 +112,12 @@
             [style.backgroundColor]="m.sender == username ? '#dcf8c6' : '#ece5dd'"
             style="border-radius: 15px; width: 80%">
                 <span class="dropdown" *ngIf="m.sender == username">
-                    <button style="padding: 0; width: 40px" class="btn float-right" type="button "
-                        data-toggle="dropdown ">
+                    <button style="padding: 0; width: 40px" class="btn float-right" type="button"
+                        data-toggle="dropdown">
                         <i style="margin: 0; padding: 0; max-height: 15px" class="fas fa-ellipsis-v"></i>
                     </button>
-                    <ul class="dropdown-menu text-danger" style="background-color: beige; margin: 0; padding: 0">
-                        <li style="background-color: beige; margin: 0; padding: 0">
+                    <ul class="dropdown-menu text-danger" role="button" style="background-color: beige; margin: 0; padding: 0">
+                        <li (click)="deleteMessage(m.id)" style="background-color: beige; margin: 0; padding: 0">
                             Delete
                         </li>
                     </ul>
@@ -138,11 +138,11 @@
     <div class="sendmsg">
         <form #messageForm="ngForm" (ngSubmit)="sendMessage(messageForm)">
             <div class="input-group">
-                <input autofocus type="text " name="message " ngModel class="form-control input-sm"
+                <input autofocus type="text" name="message" ngModel class="form-control input-sm"
                     placeholder="Type your message here... " required />
                 <span class="input-group-btn">
-                    <button [disabled]="!messageForm.valid" type="submit " class="btn btn-warning btn-sm"
-                        id="btn-chat ">
+                    <button [disabled]="!messageForm.valid" type="submit" class="btn btn-warning btn-sm"
+                        id="btn-chat">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </span>

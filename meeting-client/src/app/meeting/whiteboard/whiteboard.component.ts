@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, HostListener, AfterViewChecked } from '@angular/core';
-import { fromEvent } from 'rxjs';
-import { pairwise, switchMap, takeUntil } from 'rxjs/operators';
-
+import { fromEvent, Subscription } from 'rxjs';
+import { pairwise, switchMap, takeUntil, filter, take } from 'rxjs/operators';
+import { Socket } from 'socket.io'
 import { MeetingService } from '../meeting.service';
 
 import * as FileSaver from 'file-saver';
@@ -21,19 +21,53 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
   @Input() markerColor = '#0000ff';
   @Input() size = 5;
   @Input() bg = '#00ffff';
-
+  socket;
   public ctx: CanvasRenderingContext2D;
   canvasEl: HTMLCanvasElement;
+  subscription = Subscription;
+  roomName;
 
-  constructor(private meetingService: MeetingService) {}
+  constructor(private meetingService: MeetingService) { }
+
+  ngOnInit(): void {
+
+    this.meetingService.roomName.subscribe(room => {
+      this.roomName = room;
+    })
+
+    this.meetingService.socketChanged.pipe(filter((socket: any) => socket != undefined), take(1)).subscribe((socket: Socket) => {
+      if (socket) {
+        this.socket = socket;
+
+        this.socket.on(
+          'draw-this',
+          function (data) {
+            console.log('draw from server =======');
+            
+            this.drawOnCanvas(data.prevPos, data.currentPos, data.color, data.size);
+          }.bind(this)
+        );
+        this.socket.on(
+          'clear-board',
+          function () {
+
+            this.clearMe();
+          }.bind(this)
+        );
+      }
+
+    })
+  }
+
+
 
   ngAfterViewChecked(): void {
     this.ctx.lineWidth = this.size;
   }
-  socket = this.meetingService.socket;
 
 
-  resizeForChat(w){
+
+  resizeForChat(w) {
     this.canvasEl.width = w;
   }
   // //reset the canvas when resize
@@ -45,25 +79,9 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
   //     canvasEl.height = window.innerHeight * 0.78;
   // }
 
-  ngOnInit(): void {
-    this.socket.on(
-      'draw-this',
-      function (data) {
-        this.drawOnCanvas(data.prevPos, data.currentPos, data.color, data.size);
-      }.bind(this)
-    );
-    this.socket.on(
-      'clear-board',
-      function () {
-        
-        
-        this.clearMe();
-      }.bind(this)
-    );
-  }
 
-  
-  
+
+
   public ngAfterViewInit() {
     this.canvasEl = this.canvas.nativeElement;
     this.ctx = this.canvasEl.getContext('2d');
@@ -110,7 +128,7 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
         // this method do the actual drawing
         this.drawOnCanvas(prevPos, currentPos, this.markerColor, this.size);
         this.socket.emit('draw-coordinates', {
-          room: this.meetingService.room,
+          room: this.roomName,
           prevPos: prevPos,
           currentPos: currentPos,
           color: this.markerColor,
@@ -150,13 +168,15 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
 
         // this method do the actual drawing
         this.drawOnCanvas(prevPos, currentPos, this.markerColor, this.size);
-        this.socket.emit('draw-coordinates', {
-          room: this.meetingService.room,
-          prevPos: prevPos,
-          currentPos: currentPos,
-          color: this.markerColor,
-          size: this.size,
-        });
+        if (this.socket) {
+          this.socket.emit('draw-coordinates', {
+            room: this.roomName,
+            prevPos: prevPos,
+            currentPos: currentPos,
+            color: this.markerColor,
+            size: this.size,
+          });
+        }
       });
   }
 
@@ -171,16 +191,12 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
     if (!this.ctx) {
       return;
     }
-    
-
     this.ctx.beginPath();
-
     if (prevPos) {
       this.ctx.moveTo(prevPos.x, prevPos.y);
       this.ctx.lineTo(currentPos.x, currentPos.y);
       this.ctx.stroke();
     }
-
     this.ctx.strokeStyle = this.markerColor;
   }
 
@@ -202,14 +218,17 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
   }
 
   clear() {
-    
-    this.clearMe()
 
-    this.socket.emit('clear', this.meetingService.room);
+
+    this.clearMe()
+    if (this.socket) {
+
+      this.socket.emit('clear', this.roomName);
+    }
   }
-  clearMe(){
-    
-    
+  clearMe() {
+
+
     this.ctx.fillStyle = "#00ffff";
     this.ctx.fillRect(0, 0, this.width, this.height);
     //this.ctx.clearRect(0, 0, this.width, this.height);

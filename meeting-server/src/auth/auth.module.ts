@@ -10,7 +10,7 @@ import { JwtStrategy } from './guards/jwt-strategy';
 
 @Module({
   imports: [
-    forwardRef(()=> UserModule),
+    forwardRef(() => UserModule),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
