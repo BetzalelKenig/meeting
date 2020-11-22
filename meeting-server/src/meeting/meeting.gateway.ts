@@ -13,9 +13,6 @@ import { of } from 'rxjs';
 /**
  * move join and leave
  * to hadleConnection and disconnected
- *
- *
- *
  */
 @WebSocketGateway(3001)
 export class MeetingGateway

@@ -22,7 +22,7 @@ export class AuthService {
 
   signup(username: string, password: string) {
     return this.http
-      .post<AuthResponseData>('http://localhost:3000/users', {
+      .post<AuthResponseData>('http://localhost:3000/auth/signup', {
         username,
         password,
       })
@@ -40,13 +40,15 @@ export class AuthService {
 
   login(username: string, password: string) {
     return this.http
-      .post<AuthResponseData>('http://localhost:3000/users/login', {
+      .post<AuthResponseData>('http://localhost:3000/auth/signin', {
         username,
         password,
       })
       .pipe(
         catchError(this.handleError),
         tap((resData) => {
+          console.log(resData);
+          
           this.handleAuthentication(
             resData.name,
             resData.token,
@@ -116,14 +118,14 @@ export class AuthService {
     console.log(errorRes);
 // need costimize exeptions acordinate to server
     switch (errorRes.error.error.message) {
-      case 'EMAIL_EXISTS':
-        errorMessage = 'This email is already exists';
+      case 'NAME_EXISTS':
+        errorMessage = 'This name is already exists';
         break;
-      case 'EMAIL_NOT_FOUND':
+      case 'NAME_NOT_FOUND':
         errorMessage = 'Please sign up⛔';
         break;
       case 'INVALID_PASSWORD':
-        errorMessage = 'The email or password are uncorrect⛔';
+        errorMessage = 'The name or password are uncorrect⛔';
         break;
     }
     return throwError(errorMessage);

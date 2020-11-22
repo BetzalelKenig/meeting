@@ -28,6 +28,7 @@ export class AuthComponent {
     const name = form.value.name;
     const password = form.value.password;
 
+
     let authObs: Observable<AuthResponseData>;
 
     this.isLoading = true;

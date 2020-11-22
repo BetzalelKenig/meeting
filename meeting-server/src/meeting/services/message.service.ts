@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { Observable, from, throwError } from 'rxjs';
 import { RoomEntity } from '../models/room.entity';
 
-import { AuthService } from 'src/auth/services/auth.service';
+//import { AuthService } from 'src/auth/services/auth.service';
 import { CreateRoomDto } from '../models/create-room.dto';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -22,7 +22,7 @@ export class MessageService {
     private readonly messageRepository: Repository<MessageEntity>,
     @InjectRepository(RoomEntity)
     private readonly roomRepository: Repository<RoomEntity>,
-    private authService: AuthService,
+    
   ) { }
 
   createMessage(message: MessageEntity): Observable<MessageEntity> {
