@@ -178,6 +178,7 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
           });
         }
       });
+      
   }
 
   private drawOnCanvas(
@@ -198,6 +199,99 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
       this.ctx.stroke();
     }
     this.ctx.strokeStyle = this.markerColor;
+  }
+
+  public drswLine(){
+
+    let startPosition = {x: 0, y: 0};
+let lineCoordinates = {x: 0, y: 0};
+let isDrawStart = false;
+
+const getClientOffset = (event) => {
+    const {pageX, pageY} = event.touches ? event.touches[0] : event;
+    const x = pageX - this.canvasEl.offsetLeft;
+    const y = pageY - this.canvasEl.offsetTop;
+    return {
+       x,
+       y
+    } 
+}
+const drawLine = () => {
+  this.ctx.beginPath();
+  this.ctx.moveTo(startPosition.x, startPosition.y);
+  this.ctx.lineTo(lineCoordinates.x, lineCoordinates.y);
+  this.ctx.stroke();
+}
+
+const mouseDownListener = (event) => {
+   startPosition = getClientOffset(event);
+   isDrawStart = true;
+}
+
+const mouseMoveListener = (event) => {
+  if(!isDrawStart) return;
+  
+  lineCoordinates = getClientOffset(event);
+  //clearCanvas();
+  drawLine();
+}
+
+// var points = [];
+// points.push({
+//   x: x,
+//   y: y
+// });
+
+// canvas.clearRect(width, height);
+// points.forEach(function(point, i) {
+//   i === 0 ? canvas.moveTo(point.x, point.y) : canvas.lineTo(point.x, point.y);
+// });
+// canvas.stroke();
+
+const mouseupListener = (event) => {
+  isDrawStart = false;
+}
+
+// const clearCanvas = () => {
+//   this.ctx.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+// }
+
+this.canvasEl.addEventListener('mousedown', mouseDownListener);
+this.canvasEl.addEventListener('mousemove', mouseMoveListener);
+this.canvasEl.addEventListener('mouseup', mouseupListener);
+
+this.canvasEl.addEventListener('touchstart', mouseDownListener);
+this.canvasEl.addEventListener('touchmove', mouseMoveListener);
+this.canvasEl.addEventListener('touchend', mouseupListener);
+
+/**
+    var line, isDown;
+
+this.canvasEl.on('mouse:down', function(o){
+  var canvas = new fabric.Canvas('c', { selection: false });
+  isDown = true;
+  var pointer = this.canvasEl.getPointer(o.e);
+  var points = [ pointer.x, pointer.y, pointer.x, pointer.y ];
+  line = new fabric.Line(points, {
+    strokeWidth: 5,
+    fill: 'red',
+    stroke: 'red',
+    originX: 'center',
+    originY: 'center'
+  });
+  this.canvasEl.add(line);
+});
+
+this.canvasEl.on('mouse:move', function(o){
+  if (!isDown) return;
+  var pointer = this.canvasEl.getPointer(o.e);
+  line.set({ x2: pointer.x, y2: pointer.y });
+  this.canvasEl.renderAll();
+});
+
+this.canvasEl.on('mouse:up', function(o){
+  isDown = false;
+}); */
   }
 
   eraser() {

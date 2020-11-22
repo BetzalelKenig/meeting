@@ -12,11 +12,11 @@
             </select>
 
             <button 
-            type="button" 
+            [type]="roomForm.value.room === 'Public Room' ? 'submit' : 'button'" 
             class="btn btn-success" 
             (click)="isJoinRoomCollapsed = !isJoinRoomCollapsed"
-            [attr.aria-expanded]="!isJoinRoomCollapsed" 
-            aria-controls="joinroomform">
+            [attr.aria-expanded]="roomForm.value.room === 'Public Room' ? 'isJoinRoomCollapsed' : '!isJoinRoomCollapsed'" 
+            [aria-controls]="joinroomform">
                 Join
             </button>
             <div id="joinroomform" [ngbCollapse]="isJoinRoomCollapsed">
@@ -90,8 +90,8 @@
             <div class="col-md-8">
                 <p class=" " style="margin: 0; padding: 0">
                     {{ inRoom }}
-                    <i *ngIf="inRoom == 'Main Room'" class="fa fa-unlock" aria-hidden="true"></i>
-                    <i *ngIf="inRoom !== 'Main Room'" class="fa fa-lock" aria-hidden="true"></i>
+                    <i *ngIf="inRoom == 'Public Room'" class="fa fa-unlock" aria-hidden="true"></i>
+                    <i *ngIf="inRoom !== 'Public Room'" class="fa fa-lock" aria-hidden="true"></i>
 
                 </p>
             </div>
