@@ -13,6 +13,7 @@ export class MeetingService {
 
   userName: string;
   roomName = new BehaviorSubject('');
+  roomname;//for send in delete
   messages = new Subject();
   private socket = null;
   socketChanged = new BehaviorSubject(null);
@@ -39,9 +40,7 @@ export class MeetingService {
 
   joinRoom(roomName: string, password: string) {
 
-
-
-    //this.roomName = roomName;
+    this.roomname = roomName;
 
     this.listen();
     this.socket.emit('joinRoom', { room: roomName, password: password, username: this.userName });
@@ -83,11 +82,11 @@ export class MeetingService {
   }
 
   deleteMessgae(id: number) {
-    console.log('http://localhost:3000/meeting/' + id);
-
-    this.http.delete('http://localhost:3000/meeting/' + id).pipe(
-      catchError(this.handleError)
-    ).subscribe();
+    
+this.socket.emit('deleteMessage',{id,room:this.roomname})
+    // this.http.delete('http://localhost:3000/meeting/' + id).pipe(
+    //   catchError(this.handleError)
+    // ).subscribe();
   }
 
   handleError(errorRes: HttpErrorResponse) {

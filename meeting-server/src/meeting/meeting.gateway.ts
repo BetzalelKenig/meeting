@@ -32,27 +32,6 @@ export class MeetingGateway
   handleDisconnect(client: any) {
     console.log('disconnected');
   }
-  // get the coordinates from client and emit them to the others
-  @SubscribeMessage('draw-coordinates')
-  handleDraw(client: any, payload: any): any {
-
-    // send to others in the room
-    this.wss.to(payload.room).emit('draw-this', payload);
-  }
-
-  @SubscribeMessage('clear')
-  handleClear(client: any, payload: any): any {
-
-    // clear others
-    client.broadcast.to(payload).emit('clear-board');
-  }
-
-  @SubscribeMessage('sendMessage')
-  handleMessage(client: Socket, message: MessageEntity) {
-    this.messageService.createMessage(message);
-
-    this.wss.to(message.room).emit('chatToClient', message);
-  }
 
   @SubscribeMessage('joinRoom')
   handleRoomJoin(client: Socket, payload) {
@@ -134,6 +113,40 @@ export class MeetingGateway
         }),
       );
   }
+
+   // get the coordinates from client and emit them to the others
+   @SubscribeMessage('draw-coordinates')
+   handleDraw(client: any, payload: any): any {
+ 
+     // send to others in the room
+     this.wss.to(payload.room).emit('draw-this', payload);
+   }
+ 
+   @SubscribeMessage('clear')
+   handleClear(client: any, payload: any): any {
+ 
+     // clear others
+     client.broadcast.to(payload).emit('clear-board');
+   }
+ 
+   @SubscribeMessage('sendMessage')
+   handleMessage(client: Socket, message: MessageEntity) {
+     this.messageService.createMessage(message);
+ 
+     this.wss.to(message.room).emit('chatToClient', message);
+   }
+
+   @SubscribeMessage('deleteMessage')
+   handleDeleteMessage(client: Socket, payload:{id:number,room:string}) {
+     this.messageService.deleteMessage(payload.id);
+ 
+     this.messageService.getRoomMessages(payload.room).then(m => {
+      client.emit('roomMessages', m);
+    });
+     
+   }
+
+   
 
   @SubscribeMessage('leaveRoom')
   handleRoomLeave(client: Socket, payload) {

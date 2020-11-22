@@ -57,7 +57,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
 
     this.meetingService.messages.subscribe((m: []) => {
-      this.messages.push(...m);
+      this.messages = m;
     });
     this.authService.user.subscribe((user) => {
       this.username = user.name;
@@ -151,9 +151,9 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteMessage(id: number) { 
+  deleteMessage(id: number) {
     this.meetingService.deleteMessgae(id);
-    
+
   }
 
 
