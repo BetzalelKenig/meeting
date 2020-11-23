@@ -19,6 +19,9 @@ export class MeetingService {
   socketChanged = new BehaviorSubject(null);
   participantsChanged = new Subject();
   allRooms = new Subject();
+  socketOptions;
+  token;
+
 
 
   constructor(
@@ -30,6 +33,12 @@ export class MeetingService {
         this.userName = u.name;
       }
     });
+
+this.authService.user.subscribe(user=>{
+  this.token = user.token;
+})
+
+    
 
     this.http.get('http://localhost:3000/meeting/rooms').subscribe(rooms => {
       this.allRooms.next(rooms);
@@ -62,7 +71,10 @@ export class MeetingService {
   }
 
   listen() {
-    this.socket = io('http://localhost:3001');
+    this.socket = io('http://localhost:3001', {
+      query: {
+        auth: this.token
+      }});
     this.socketChanged.next(this.socket)
     this.socket.on('joinedRoom', (name, room, participants) => {
       this.roomName.next(room);
@@ -82,8 +94,8 @@ export class MeetingService {
   }
 
   deleteMessgae(id: number) {
-    
-this.socket.emit('deleteMessage',{id,room:this.roomname})
+
+    this.socket.emit('deleteMessage', { id, room: this.roomname })
     // this.http.delete('http://localhost:3000/meeting/' + id).pipe(
     //   catchError(this.handleError)
     // ).subscribe();

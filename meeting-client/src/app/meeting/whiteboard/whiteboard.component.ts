@@ -14,6 +14,7 @@ import * as FileSaver from 'file-saver';
 export class WhiteboardComponent implements OnInit, AfterViewChecked {
   @ViewChild('canvas', { static: true }) public canvas: ElementRef;
   @ViewChild('bgColor', { static: true }) public bgColor: ElementRef;
+  @ViewChild('inp', { static: true }) public inp: ElementRef;
 
   public width = window.innerWidth * 0.55;
   public height = window.innerHeight * 0.75;
@@ -26,7 +27,8 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
   canvasEl: HTMLCanvasElement;
   subscription = Subscription;
   roomName;
-
+  src;//for image upload
+  img;
   constructor(private meetingService: MeetingService) { }
 
   ngOnInit(): void {
@@ -42,8 +44,8 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
         this.socket.on(
           'draw-this',
           function (data) {
-            console.log('draw from server =======');
-            
+
+
             this.drawOnCanvas(data.prevPos, data.currentPos, data.color, data.size);
           }.bind(this)
         );
@@ -58,6 +60,7 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
 
     })
   }
+
 
 
 
@@ -98,6 +101,9 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
     this.ctx.fillRect(0, 0, this.width, this.height);
     //this.image = this.canvas.nativeElement.toDataURL('image/png');
     this.captureEvents(this.canvasEl);
+
+
+
   }
 
   private captureEvents(canvasEl: HTMLCanvasElement) {
@@ -178,6 +184,7 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
           });
         }
       });
+
   }
 
   private drawOnCanvas(
@@ -200,37 +207,212 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
     this.ctx.strokeStyle = this.markerColor;
   }
 
+  public drawLine() {
+
+    let startPosition = { x: 0, y: 0 };
+    let lineCoordinates = { x: 0, y: 0 };
+    let isDrawStart = false;
+
+    const getClientOffset = (event) => {
+      const { pageX, pageY } = event.touches ? event.touches[0] : event;
+      const x = pageX - this.canvasEl.offsetLeft;
+      const y = pageY - this.canvasEl.offsetTop;
+      return {
+        x,
+        y
+      }
+    }
+    const drawLine = () => {
+      this.ctx.beginPath();
+      this.ctx.moveTo(startPosition.x, startPosition.y);
+      this.ctx.lineTo(lineCoordinates.x, lineCoordinates.y);
+      this.ctx.stroke();
+    }
+
+    const mouseDownListener = (event) => {
+      startPosition = getClientOffset(event);
+      isDrawStart = true;
+    }
+
+    const mouseMoveListener = (event) => {
+      if (!isDrawStart) return;
+
+      lineCoordinates = getClientOffset(event);
+      //clearCanvas();
+      this.ctx.clearRect(lineCoordinates.x, lineCoordinates.y, startPosition.x, startPosition.y);
+      drawLine();
+    }
+
+    // var points = [];
+    // points.push({
+    //   x: x,
+    //   y: y
+    // });
+
+    // canvas.clearRect(width, height);
+    // points.forEach(function(point, i) {
+    //   i === 0 ? canvas.moveTo(point.x, point.y) : canvas.lineTo(point.x, point.y);
+    // });
+    // canvas.stroke();
+
+    const mouseupListener = (event) => {
+      isDrawStart = false;
+    }
+
+
+    this.canvasEl.addEventListener('mousedown', mouseDownListener);
+    this.canvasEl.addEventListener('mousemove', mouseMoveListener);
+    this.canvasEl.addEventListener('mouseup', mouseupListener);
+
+    this.canvasEl.addEventListener('touchstart', mouseDownListener);
+    this.canvasEl.addEventListener('touchmove', mouseMoveListener);
+    this.canvasEl.addEventListener('touchend', mouseupListener);
+
+    /**
+        var line, isDown;
+    
+    this.canvasEl.on('mouse:down', function(o){
+      var canvas = new fabric.Canvas('c', { selection: false });
+      isDown = true;
+      var pointer = this.canvasEl.getPointer(o.e);
+      var points = [ pointer.x, pointer.y, pointer.x, pointer.y ];
+      line = new fabric.Line(points, {
+        strokeWidth: 5,
+        fill: 'red',
+        stroke: 'red',
+        originX: 'center',
+        originY: 'center'
+      });
+      this.canvasEl.add(line);
+    });
+    
+    this.canvasEl.on('mouse:move', function(o){
+      if (!isDown) return;
+      var pointer = this.canvasEl.getPointer(o.e);
+      line.set({ x2: pointer.x, y2: pointer.y });
+      this.canvasEl.renderAll();
+    });
+    
+    this.canvasEl.on('mouse:up', function(o){
+      isDown = false;
+    }); */
+  }
+  // turn the color to background color
   eraser() {
     this.markerColor = this.bg;
   }
-
+  // turn the color to blue after erase
   draw(jscolor) {
     this.markerColor = '#0000ff';
     if (this.markerColor == undefined) {
       this.markerColor = '#000000';
     }
   }
-
+  /**Save the canvas as image 
+   * Todo: let the user choose the name
+   */
   saveImage() {
     this.canvas.nativeElement.toBlob((blob) =>
-      FileSaver.saveAs(blob, 'image.png')
+      FileSaver.saveAs(blob, 'canvas-image.png')
     );
   }
 
+  uploading() {
+    const base_image = new Image();
+    
+    base_image.src = URL.createObjectURL(this.inp.nativeElement.files[0]);
+    base_image.onload =  ()=> {
+      this.ctx.drawImage(base_image, this.width/4, this.height/4);
+     // let dataUrl = canvas.toDataURL('image/jpeg');
+    }
+  }
+
+
+
+  //    handleImage(e){
+  //     var reader = new FileReader();
+  //     reader.onload = function(event){
+  //         var img = new Image();
+  //         img.onload = function(){
+  //             canvas.width = img.width;
+  //             canvas.height = img.height;
+  //             ctx.drawImage(img,0,0);
+  //         }
+  //         img.src = event.target.result;
+  //     }
+  //     reader.readAsDataURL(e.target.files[0]);     
+  // }
+
+  // clear the canvas and emit to the room
   clear() {
-
-
     this.clearMe()
     if (this.socket) {
 
       this.socket.emit('clear', this.roomName);
     }
   }
+
+  // clear the canvas by draw background
   clearMe() {
-
-
     this.ctx.fillStyle = "#00ffff";
     this.ctx.fillRect(0, 0, this.width, this.height);
-    //this.ctx.clearRect(0, 0, this.width, this.height);
+
+  }
+
+
+
+}
+
+// document.getElementById('inp').onchange = function(e) {
+//   var img = new Image();
+//   img.onload = draw;
+//   img.onerror = failed;
+//   img.src = URL.createObjectURL(this.files[0]);
+// };
+// function draw() {
+//   var canvas = document.getElementById('canvas');
+//   canvas.width = this.width;
+//   canvas.height = this.height;
+//   var ctx = canvas.getContext('2d');
+//   ctx.drawImage(this, 0,0);
+// }
+// function failed() {
+//   console.error("The provided file couldn't be loaded as an Image media");
+// }
+
+
+
+
+
+
+
+
+
+
+/**
+ // let the user upload image to the canvas
+ onChangeEvent(event: any) {
+
+  this.img = new Image();
+  this.img.onload = this.drawImage;
+   this.img.onerror = failed;
+  this.img.src = URL.createObjectURL(this.inp.nativeElement.files[0]);
+ // this.src = this.img.src;
+  console.log(this.ctx, '==========');
+//  this.ctx.drawImage(this.img, 0, 0);
+  function failed() {
+    console.error("The provided file couldn't be loaded as an Image media");
   }
 }
+
+drawImage(img) {
+  //  let canvas = this.canvas.nativeElement;
+  //  console.log(canvas,'==========draw image');
+  //  let ctx = canvas.getContext('2d');
+
+  // canvas.width = this.width;
+  // canvas.height = this.height;
+
+
+  this.ctx.drawImage(img, 0, 0);
+}*/

@@ -59,8 +59,11 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.meetingService.messages.subscribe((m: []) => {
       this.messages = m;
     });
+
     this.authService.user.subscribe((user) => {
-      this.username = user.name;
+      if (user) {
+        this.username = user.name;
+      }
     });
   }
 
@@ -80,7 +83,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     })
 
     this.room.emit(this.inRoom);
-    this.meetingService.joinRoom(form.value.room, form.value.roompassord);
+    if (form.value.room === 'Public Room') {
+      this.meetingService.joinRoom(form.value.room, '123');
+    } else {
+
+      this.meetingService.joinRoom(form.value.room, form.value.roompassord);
+    }
 
     this.socket.on('errors', (error => {
       console.log(error);

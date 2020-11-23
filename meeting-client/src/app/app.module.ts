@@ -5,13 +5,26 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { HomeComponent } from './home/home.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptorService } from './auth/auth.interseptor.service';
 
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
-  imports: [BrowserModule, AppRoutingModule, SharedModule, HttpClientModule],
-  providers: [],
+  imports: [
+    BrowserModule, 
+    AppRoutingModule, 
+    SharedModule, 
+    HttpClientModule],
+
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
+
+// providers: [
+//   {
+//   provide: HTTP_INTERCEPTORS,
+//   useClass: AuthInterceptorService,
+//   multi: true,
+// },
+// ],

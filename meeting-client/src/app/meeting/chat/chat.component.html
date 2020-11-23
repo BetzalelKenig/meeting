@@ -5,18 +5,17 @@
         <div class="form-group">
             <!-- <input type="text"  name="room" class="form-control"> -->
             <select value="Public Room" [(ngModel)]="defaultRoom" name="room" class="form-control">
-                <option value="Public Room">Public Room
-                </option>
+                
                 <option *ngFor='let room of allRooms' [value]="room">{{room}}</option>
                
             </select>
 
             <button 
-            type="button" 
+            [type]="roomForm.value.room === 'Public Room' ? 'submit' : 'button'" 
             class="btn btn-success" 
-            (click)="isJoinRoomCollapsed = !isJoinRoomCollapsed"
-            [attr.aria-expanded]="!isJoinRoomCollapsed" 
-            aria-controls="joinroomform">
+            (click)="isJoinRoomCollapsed = roomForm.value.room === 'Public Room' ? isJoinRoomCollapsed : !isJoinRoomCollapsed"
+            [attr.aria-expanded]="roomForm.value.room === 'Public Room' ? 'isJoinRoomCollapsed' : '!isJoinRoomCollapsed'" 
+            [aria-controls]="joinroomform">
                 Join
             </button>
             <div id="joinroomform" [ngbCollapse]="isJoinRoomCollapsed">
@@ -90,8 +89,8 @@
             <div class="col-md-8">
                 <p class=" " style="margin: 0; padding: 0">
                     {{ inRoom }}
-                    <i *ngIf="inRoom == 'Main Room'" class="fa fa-unlock" aria-hidden="true"></i>
-                    <i *ngIf="inRoom !== 'Main Room'" class="fa fa-lock" aria-hidden="true"></i>
+                    <i *ngIf="inRoom == 'Public Room'" class="fa fa-unlock" aria-hidden="true"></i>
+                    <i *ngIf="inRoom !== 'Public Room'" class="fa fa-lock" aria-hidden="true"></i>
 
                 </p>
             </div>
@@ -126,7 +125,7 @@
           m.sender == username ? "Me( " + m.sender + ") " : m.sender
         }}</span>
                 <span class="float-right font-weight-lighter small">
-                    <small>{{ m.date | date: "short " }}</small>
+                    <small>{{ m.date | date: "short" }}</small>
                 </span>
                 <hr />
                 <p>{{ m.message }}</p>

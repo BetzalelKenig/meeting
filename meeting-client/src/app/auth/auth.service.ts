@@ -18,35 +18,53 @@ export class AuthService {
   user = new BehaviorSubject<User>(null);
   private tokenExpirationTimer: any;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+    // this.logUsers()
+  }
+
+
+  logUsers() {
+    this.user.subscribe(user => {
+      if (user) {
+        console.log(user.token);
+
+        this.http.get('http://localhost:3000/auth', { headers: { authorization: 'Bearer ' + user.token } }).subscribe(users => {
+          console.log(users);
+        })
+      }
+    })
+  }
+
 
   signup(username: string, password: string) {
     return this.http
-      .post<AuthResponseData>('http://localhost:3000/users', {
-        username,
-        password,
-      })
-      .pipe(
-        catchError(this.handleError),
-      tap((resData) => {
-        this.handleAuthentication(
-          resData.name,
-          resData.token,
-          +resData.expiresIn
-        );
-      })
-    );
-  }
-
-  login(username: string, password: string) {
-    return this.http
-      .post<AuthResponseData>('http://localhost:3000/users/login', {
+      .post<AuthResponseData>('http://localhost:3000/auth/signup', {
         username,
         password,
       })
       .pipe(
         catchError(this.handleError),
         tap((resData) => {
+          this.handleAuthentication(
+            resData.name,
+            resData.token,
+            +resData.expiresIn
+          );
+        })
+      );
+  }
+
+  login(username: string, password: string) {
+    return this.http
+      .post<AuthResponseData>('http://localhost:3000/auth/signin', {
+        username,
+        password,
+      })
+      .pipe(
+        catchError(this.handleError),
+        tap((resData) => {
+          console.log(resData);
+
           this.handleAuthentication(
             resData.name,
             resData.token,
@@ -113,17 +131,13 @@ export class AuthService {
     if (!errorRes.error || !errorRes.error.error) {
       return throwError(errorMessage);
     }
-    console.log(errorRes);
-// need costimize exeptions acordinate to server
-    switch (errorRes.error.error.message) {
-      case 'EMAIL_EXISTS':
-        errorMessage = 'This email is already exists';
+    switch (errorRes.error.message) {
+      case 'Invalid credentials':
+        errorMessage = 'Invalid credentials⛔';
         break;
-      case 'EMAIL_NOT_FOUND':
-        errorMessage = 'Please sign up⛔';
-        break;
-      case 'INVALID_PASSWORD':
-        errorMessage = 'The email or password are uncorrect⛔';
+      case 'Username already exists':
+        errorMessage = `This name is already exists.
+      Please chose another nick name`;
         break;
     }
     return throwError(errorMessage);
