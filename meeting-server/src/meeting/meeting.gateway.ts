@@ -23,12 +23,16 @@ export class MeetingGateway
 
   // server for send the massage to averyone
   @WebSocketServer() wss: Server;
-
+//   https://github.com/nestjs/nest/issues/3206         //implement websocket jwt strategy
   @UseGuards(WsGuard)
   handleConnection(client: any, ...args: any[]) {
+    console.log(client.handshake.headers);
+    console.log(client.handshake.query,'======hearder');
+    
+    
     let auth_token = client.handshake.headers.authorization;
     // get the token itself without "Bearer"
-    auth_token = auth_token.split(' ')[1];
+   // auth_token = auth_token.split(' ')[1];
     console.log('connection');
     console.log(auth_token);
     

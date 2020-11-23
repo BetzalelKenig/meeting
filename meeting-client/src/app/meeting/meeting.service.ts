@@ -37,6 +37,8 @@ socketOptions;
       access_token: string;
       _tokenExpirationDate: string;
     } = JSON.parse(localStorage.getItem('userData'));
+    console.log(userData.access_token,'=================');
+    
     this.socketOptions = {
       transportOptions: {
         polling: {
