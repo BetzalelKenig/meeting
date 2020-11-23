@@ -1,7 +1,9 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post, ValidationPipe, Get, UseGuards, Req } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { JwtAuthGuard } from './jwt.guard';
+import { Request } from 'express'
 
 @Controller('auth')
 export class AuthController {
@@ -19,5 +21,15 @@ export class AuthController {
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
   ): Promise<{name:string, token: string, expiresIn:number }> {
     return this.authService.signIn(authCredentialsDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  getUsers(@Req() request: Request){
+    console.log(request);
+    
+   // console.log(JSON.stringify(request)+'==========');
+   // return request
+    return this.authService.getUsers();
   }
 }

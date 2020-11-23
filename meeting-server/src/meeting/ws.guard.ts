@@ -17,9 +17,12 @@ export class WsGuard implements CanActivate {
   canActivate(
     context: any,
   ): boolean | any | Promise<boolean | any> | Observable<boolean | any> {
-    const bearerToken = context.args[0].handshake.headers.authorization.split(' ')[1];
+   
+    const request = context.switchToHttp().getRequest();
+    const token = request.handshake.query.auth;
+    
     try {
-      const decoded = this.jwtService.verify(bearerToken, {secret:'asdfsecret'}) as any;
+      const decoded = this.jwtService.verify(token, {secret:'asdfsecret'}) as any;
       return new Promise((resolve, reject) => {
         return this.userRepository.findByUsername(decoded.username).then(user => {
           if (user) {

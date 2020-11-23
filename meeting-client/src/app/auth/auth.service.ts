@@ -18,7 +18,23 @@ export class AuthService {
   user = new BehaviorSubject<User>(null);
   private tokenExpirationTimer: any;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+   // this.logUsers()
+  }
+
+
+  logUsers() {
+    this.user.subscribe(user => {
+      if (user) {
+        console.log(user.token);
+
+        this.http.get('http://localhost:3000/auth', { headers: { authorization: 'Bearer '+ user.token } }).subscribe(users => {
+          console.log(users);
+        })
+      }
+    })
+  }
+
 
   signup(username: string, password: string) {
     return this.http
@@ -28,14 +44,14 @@ export class AuthService {
       })
       .pipe(
         catchError(this.handleError),
-      tap((resData) => {
-        this.handleAuthentication(
-          resData.name,
-          resData.token,
-          +resData.expiresIn
-        );
-      })
-    );
+        tap((resData) => {
+          this.handleAuthentication(
+            resData.name,
+            resData.token,
+            +resData.expiresIn
+          );
+        })
+      );
   }
 
   login(username: string, password: string) {
@@ -48,7 +64,7 @@ export class AuthService {
         catchError(this.handleError),
         tap((resData) => {
           console.log(resData);
-          
+
           this.handleAuthentication(
             resData.name,
             resData.token,
@@ -116,7 +132,7 @@ export class AuthService {
       return throwError(errorMessage);
     }
     console.log(errorRes);
-// need costimize exeptions acordinate to server
+    // need costimize exeptions acordinate to server
     switch (errorRes.error.error.message) {
       case 'NAME_EXISTS':
         errorMessage = 'This name is already exists';

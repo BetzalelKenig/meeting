@@ -19,9 +19,10 @@ export class MeetingService {
   socketChanged = new BehaviorSubject(null);
   participantsChanged = new Subject();
   allRooms = new Subject();
-socketOptions;
+  socketOptions;
+  token;
 
-  
+
 
   constructor(
     private authService: AuthService,
@@ -32,24 +33,14 @@ socketOptions;
         this.userName = u.name;
       }
     });
-    const userData: {
-      name: string;
-      access_token: string;
-      _tokenExpirationDate: string;
-    } = JSON.parse(localStorage.getItem('userData'));
-    console.log(userData.access_token,'=================');
-    
-    this.socketOptions = {
-      transportOptions: {
-        polling: {
-          extraHeaders: {
-            Authorization: userData.access_token, //'Bearer h93t4293t49jt34j9rferek...'
-          }
-        }
-      }
-   };
 
-    this.http.get('http://localhost:3000/meeting/rooms',this.socketOptions).subscribe(rooms => {
+this.authService.user.subscribe(user=>{
+  this.token = user.token;
+})
+
+    
+
+    this.http.get('http://localhost:3000/meeting/rooms').subscribe(rooms => {
       this.allRooms.next(rooms);
 
     })
@@ -80,7 +71,10 @@ socketOptions;
   }
 
   listen() {
-    this.socket = io('http://localhost:3001');
+    this.socket = io('http://localhost:3001', {
+      query: {
+        auth: this.token
+      }});
     this.socketChanged.next(this.socket)
     this.socket.on('joinedRoom', (name, room, participants) => {
       this.roomName.next(room);
@@ -100,8 +94,8 @@ socketOptions;
   }
 
   deleteMessgae(id: number) {
-    
-this.socket.emit('deleteMessage',{id,room:this.roomname})
+
+    this.socket.emit('deleteMessage', { id, room: this.roomname })
     // this.http.delete('http://localhost:3000/meeting/' + id).pipe(
     //   catchError(this.handleError)
     // ).subscribe();
