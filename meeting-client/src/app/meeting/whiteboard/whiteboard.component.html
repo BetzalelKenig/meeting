@@ -33,20 +33,15 @@
                 </label>
             </div>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             <button class="btn btn-success" (click)="drawLine()">Line</button>
-        </li>
+        </li> -->
         <li class="nav-item">
             <div class="file-input">
-                <input #inp type="file" id="inp" id="file" class="file" (change)="uploadimg()">
+                <input #inp type="file" id="inp" id="file" class="file" (change)="uploading()">
                 <label for="file" class="btn btn-warning" style="font-size: x-small;">Select file</label>
             </div>
-            <!-- <input class="form-control input-sm" #inp type="file" id="inp">
-                <button class="btn btn-warning" (click)="uploadimg()">upload</button> -->
         </li>
-        <!-- <li class="nav-item">
-            <button class="btn btn-warning" (click)="uploadimg()" style="font-size: x-small;">upload</button>
-        </li> -->
     </ul>
 
     <ul class="nav navbar-nav navbar-right" style="margin-left: 100px">

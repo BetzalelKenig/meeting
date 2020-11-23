@@ -317,7 +317,7 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
     );
   }
 
-  uploadimg() {
+  uploading() {
     const base_image = new Image();
     
     base_image.src = URL.createObjectURL(this.inp.nativeElement.files[0]);

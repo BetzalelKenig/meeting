@@ -28,6 +28,7 @@ button {
   }
 
   .file-input label {
+      margin-left: 20px;
     display: block;
     position: relative;
     width: 60px;
