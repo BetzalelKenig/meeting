@@ -19,7 +19,7 @@ export class AuthService {
   private tokenExpirationTimer: any;
 
   constructor(private http: HttpClient, private router: Router) {
-   // this.logUsers()
+    // this.logUsers()
   }
 
 
@@ -28,7 +28,7 @@ export class AuthService {
       if (user) {
         console.log(user.token);
 
-        this.http.get('http://localhost:3000/auth', { headers: { authorization: 'Bearer '+ user.token } }).subscribe(users => {
+        this.http.get('http://localhost:3000/auth', { headers: { authorization: 'Bearer ' + user.token } }).subscribe(users => {
           console.log(users);
         })
       }
@@ -131,17 +131,13 @@ export class AuthService {
     if (!errorRes.error || !errorRes.error.error) {
       return throwError(errorMessage);
     }
-    console.log(errorRes);
-    // need costimize exeptions acordinate to server
-    switch (errorRes.error.error.message) {
-      case 'NAME_EXISTS':
-        errorMessage = 'This name is already exists';
+    switch (errorRes.error.message) {
+      case 'Invalid credentials':
+        errorMessage = 'Invalid credentials⛔';
         break;
-      case 'NAME_NOT_FOUND':
-        errorMessage = 'Please sign up⛔';
-        break;
-      case 'INVALID_PASSWORD':
-        errorMessage = 'The name or password are uncorrect⛔';
+      case 'Username already exists':
+        errorMessage = `This name is already exists.
+      Please chose another nick name`;
         break;
     }
     return throwError(errorMessage);
