@@ -23,13 +23,11 @@ export class AuthController {
     return this.authService.signIn(authCredentialsDto);
   }
 
+
+  // for test need to be in user controller for admin
   @UseGuards(JwtAuthGuard)
   @Get()
   getUsers(@Req() request: Request){
-    console.log(request);
-    
-   // console.log(JSON.stringify(request)+'==========');
-   // return request
     return this.authService.getUsers();
   }
 }

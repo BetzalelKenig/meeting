@@ -12,17 +12,17 @@ export class WsGuard implements CanActivate {
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
     private jwtService: JwtService,
-  ){}
+  ) { }
 
   canActivate(
     context: any,
   ): boolean | any | Promise<boolean | any> | Observable<boolean | any> {
-   
+
     const request = context.switchToHttp().getRequest();
     const token = request.handshake.query.auth;
-    
+
     try {
-      const decoded = this.jwtService.verify(token, {secret:'asdfsecret'}) as any;
+      const decoded = this.jwtService.verify(token, { secret: 'asdfsecret' }) as any;
       return new Promise((resolve, reject) => {
         return this.userRepository.findByUsername(decoded.username).then(user => {
           if (user) {

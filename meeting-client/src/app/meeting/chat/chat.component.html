@@ -5,8 +5,7 @@
         <div class="form-group">
             <!-- <input type="text"  name="room" class="form-control"> -->
             <select value="Public Room" [(ngModel)]="defaultRoom" name="room" class="form-control">
-                <option value="Public Room">Public Room
-                </option>
+                
                 <option *ngFor='let room of allRooms' [value]="room">{{room}}</option>
                
             </select>
@@ -14,7 +13,7 @@
             <button 
             [type]="roomForm.value.room === 'Public Room' ? 'submit' : 'button'" 
             class="btn btn-success" 
-            (click)="isJoinRoomCollapsed = !isJoinRoomCollapsed"
+            (click)="isJoinRoomCollapsed = roomForm.value.room === 'Public Room' ? isJoinRoomCollapsed : !isJoinRoomCollapsed"
             [attr.aria-expanded]="roomForm.value.room === 'Public Room' ? 'isJoinRoomCollapsed' : '!isJoinRoomCollapsed'" 
             [aria-controls]="joinroomform">
                 Join
