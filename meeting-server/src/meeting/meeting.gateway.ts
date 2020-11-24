@@ -12,14 +12,10 @@ import { catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { UseGuards } from '@nestjs/common';
 import { WsGuard } from './ws.guard';
-import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
-/**
- * move join and leave
- * to hadleConnection and disconnected
- */
+
 @UseGuards(WsGuard)
-@WebSocketGateway(3001)
+@WebSocketGateway()
 export class MeetingGateway
   implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private messageService: MessageService) { }
@@ -38,8 +34,6 @@ export class MeetingGateway
 
   @SubscribeMessage('joinRoom')
   handleRoomJoin(client: Socket, payload) {
-    console.log("Authorization=====================", client.handshake.query.auth)
-console.log(client.handshake.headers);
 
     this.messageService.validateRoom(payload.room, payload.password).then(c => {
 

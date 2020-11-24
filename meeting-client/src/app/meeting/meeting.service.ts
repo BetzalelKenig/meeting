@@ -4,7 +4,6 @@ import * as io from 'socket.io-client';
 import { AuthService } from '../auth/auth.service';
 import { BehaviorSubject, Subject, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
