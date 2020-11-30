@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { HomeComponent } from './home/home.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptorService } from './auth/auth.interseptor.service';
+//import { AuthInterceptorService } from './auth/auth.interseptor.service';
 
 
 @NgModule({
