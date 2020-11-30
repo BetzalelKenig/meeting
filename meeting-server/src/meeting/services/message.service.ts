@@ -13,8 +13,8 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 @Injectable()
 export class MessageService {
 
-  // Save active rooms white their participants
-  // for sending the participants to new participants
+  // Save active rooms with their participants
+  // for sending the participants to new participant
   rooms = {};
 
   constructor(

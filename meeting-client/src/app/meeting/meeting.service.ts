@@ -4,7 +4,11 @@ import * as io from 'socket.io-client';
 import { AuthService } from '../auth/auth.service';
 import { BehaviorSubject, Subject, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-
+/**
+ * This service responsible for
+ * send data to chat and whiteboard components
+ * from server
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -27,29 +31,22 @@ export class MeetingService {
     private authService: AuthService,
     private http: HttpClient
   ) {
-    this.authService.user.subscribe((u) => {
-      if (u) {
-        this.userName = u.name;
-      }
-    });
-
-this.authService.user.subscribe(user=>{
-  this.token = user.token;
-})
-
     
-
-    this.http.get('http://localhost:3000/meeting/rooms').subscribe(rooms => {
-      this.allRooms.next(rooms);
-
+    this.authService.user.subscribe(user => {
+      if (user) {
+        this.userName = user.name;
+        this.token = user.token;
+      }
     })
 
+    this.authService.rooms.subscribe(rooms => {
+      this.allRooms.next(rooms);
+    })
   }
 
   joinRoom(roomName: string, password: string) {
 
     this.roomname = roomName;
-
     this.listen();
     this.socket.emit('joinRoom', { room: roomName, password: password, username: this.userName });
 
@@ -70,10 +67,11 @@ this.authService.user.subscribe(user=>{
   }
 
   listen() {
-    this.socket = io('http://localhost:3001', {
+    this.socket = io('http://localhost:3000', {
       query: {
         auth: this.token
-      }});
+      }
+    });
     this.socketChanged.next(this.socket)
     this.socket.on('joinedRoom', (name, room, participants) => {
       this.roomName.next(room);
@@ -89,15 +87,13 @@ this.authService.user.subscribe(user=>{
 
     this.socket.on('roomMessages', messages => {
       this.messages.next(messages);
+
     })
   }
 
   deleteMessgae(id: number) {
 
     this.socket.emit('deleteMessage', { id, room: this.roomname })
-    // this.http.delete('http://localhost:3000/meeting/' + id).pipe(
-    //   catchError(this.handleError)
-    // ).subscribe();
   }
 
   handleError(errorRes: HttpErrorResponse) {

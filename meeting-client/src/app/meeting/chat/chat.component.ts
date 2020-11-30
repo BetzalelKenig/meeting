@@ -106,7 +106,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   addRoom(roomForm: NgForm) {
     if (roomForm.value.password !== roomForm.value.verifypass) {
-      console.log(roomForm.value.password, '!==', roomForm.value.verify);
+     // console.log(roomForm.value.password, '!==', roomForm.value.verify);
 
     } else {
       this.inRoom = roomForm.value.name;
@@ -134,7 +134,6 @@ export class ChatComponent implements OnInit, OnDestroy {
       sender: name,
       message: messageForm.value.message,
     };
-    console.log(messageData);
 
     messageForm.reset();
     this.socket.emit('sendMessage', { room: this.inRoom, ...messageData });
@@ -161,6 +160,10 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   deleteMessage(id: number) {
     this.meetingService.deleteMessgae(id);
+    console.log('==delete message');
+    console.log(this.messages);
+     
+    
 
   }
 

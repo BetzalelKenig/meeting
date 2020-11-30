@@ -321,8 +321,9 @@ export class WhiteboardComponent implements OnInit, AfterViewChecked {
     const base_image = new Image();
     
     base_image.src = URL.createObjectURL(this.inp.nativeElement.files[0]);
+    
     base_image.onload =  ()=> {
-      this.ctx.drawImage(base_image, this.width/4, this.height/4);
+      this.ctx.drawImage(base_image, 0, 0,this.width,this.height);
      // let dataUrl = canvas.toDataURL('image/jpeg');
     }
   }

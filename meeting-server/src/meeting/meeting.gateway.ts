@@ -137,12 +137,11 @@ export class MeetingGateway
 
   @SubscribeMessage('deleteMessage')
   handleDeleteMessage(client: Socket, payload: { id: number, room: string }) {
-    this.messageService.deleteMessage(payload.id);
-
-    this.messageService.getRoomMessages(payload.room).then(m => {
-      client.emit('roomMessages', m);
+    this.messageService.deleteMessage(payload.id).then(res => {
+      this.messageService.getRoomMessages(payload.room).then(m => {
+        client.emit('roomMessages', m);
+      });
     });
-
   }
 
 

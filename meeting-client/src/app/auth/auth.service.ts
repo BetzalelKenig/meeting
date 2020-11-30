@@ -15,11 +15,19 @@ export interface AuthResponseData {
   providedIn: 'root',
 })
 export class AuthService {
+  
   user = new BehaviorSubject<User>(null);
+  rooms = new BehaviorSubject<string[]>(null);
   private tokenExpirationTimer: any;
 
   constructor(private http: HttpClient, private router: Router) {
     // this.logUsers()
+  }
+
+  getRoomsName(){
+    this.http.get('http://localhost:3000/meeting/rooms').subscribe((roomsName:string[]) => {
+      this.rooms.next(roomsName);
+    })
   }
 
 
@@ -50,6 +58,7 @@ export class AuthService {
             resData.token,
             +resData.expiresIn
           );
+          this.getRoomsName();
         })
       );
   }
@@ -63,13 +72,12 @@ export class AuthService {
       .pipe(
         catchError(this.handleError),
         tap((resData) => {
-          console.log(resData);
-
           this.handleAuthentication(
             resData.name,
             resData.token,
             +resData.expiresIn
           );
+          this.getRoomsName();
         })
       );
   }
@@ -93,7 +101,7 @@ export class AuthService {
 
     if (loadedUser.token) {
       this.user.next(loadedUser);
-
+      this.getRoomsName();
       const expirationDuration =
         new Date(userData._tokenExpirationDate).getTime() -
         new Date().getTime();
